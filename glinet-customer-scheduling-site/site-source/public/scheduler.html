@@ -1,0 +1,3568 @@
+﻿<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>&#23458;&#26381;&#26234;&#33021;&#25490;&#29677; - &#26032;&#29256;</title>
+<style>
+:root{
+  --bg:#f3fbf5;--panel:#ffffff;--ink:#143126;--muted:#5e7d6f;--line:#cfe6d7;
+  --blue:#22a05a;--red:#b42318;--amber:#b54708;--green:#087443;
+}
+*{box-sizing:border-box}
+body{margin:0;background:linear-gradient(180deg,#f7fdf8 0%,#edf7ef 100%);color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+main{max-width:1500px;margin:0 auto;padding:22px}
+h1,h2,h3,p{margin:0}
+h1{font-size:28px;margin-bottom:6px;color:#103625}
+h2{font-size:18px;margin-bottom:10px}
+.small{color:var(--muted);font-size:13px;line-height:1.5}
+.card{background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:15px;margin:12px 0;box-shadow:0 14px 40px rgba(27,94,48,.08)}
+.grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+label{display:block;color:var(--muted);font-size:13px;margin:8px 0}
+input,textarea,select{width:100%;border:1px solid var(--line);border-radius:10px;padding:8px;background:#fff}
+#month{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+#month::-webkit-datetime-edit,
+#month::-webkit-datetime-edit-fields-wrapper,
+#month::-webkit-datetime-edit-text,
+#month::-webkit-datetime-edit-month-field,
+#month::-webkit-datetime-edit-year-field{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+textarea{min-height:120px;font:13px/1.5 Consolas,"Microsoft YaHei",monospace;resize:vertical}
+button{height:38px;border:1px solid var(--blue);background:linear-gradient(135deg,#33bf72,#229f5a);color:#fff;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer;margin:4px 8px 4px 0;box-shadow:0 10px 24px rgba(34,160,90,.16)}
+button.secondary{background:#fff;color:var(--blue);box-shadow:none}
+.scroll{overflow-x:auto;overflow-y:visible}
+.monthlyScroll{max-height:72vh;overflow:auto}
+.monthlyScroll #monthly{min-width:max-content}
+table{width:100%;border-collapse:collapse;background:#fff;margin-top:8px}
+th,td{border:1px solid var(--line);padding:6px 8px;font-size:13px;text-align:center;white-space:nowrap}
+th{background:#edf8f0}
+.groupTitle td{background:#ddf3e3!important;font-weight:800;text-align:left;border-top:3px solid #1f6d44}
+.warn{color:var(--amber);font-weight:700}
+.bad{color:var(--red);font-weight:800}
+.ok{color:var(--green);font-weight:800}
+.restCell{background:#fff!important;color:#98a2b3}
+.blankCell{background:#f3faf5!important;color:#b9cebf}
+.prevMonthCell{background:#f3faf5!important;color:var(--muted)}
+.prevMonthHead{background:#f3faf5!important;color:var(--muted)}
+.prevMonthEditable{cursor:text}
+.leaveCell,.leaveCell .scheduleSelect{color:var(--red)!important}
+.scheduleSelect{min-width:74px;border:0;background:transparent;padding:2px 4px;font:inherit;font-weight:700;text-align:center;color:inherit}
+.scheduleSelect:focus{outline:2px solid rgba(34,160,90,.28);background:#fff;border-radius:4px}
+.scheduleCellWrap{display:flex;flex-direction:column;align-items:center;gap:4px}
+.tagSelect{min-width:74px;border:1px dashed rgba(34,160,90,.24);background:rgba(255,255,255,.72);padding:1px 4px;font-size:11px;line-height:1.35;text-align:center;color:var(--muted);border-radius:6px}
+.tagSelect:disabled{opacity:.55;background:rgba(243,250,245,.9);color:#97aa9f}
+.tagSelect[data-has-tag="1"]{color:transparent}
+.tagSelect option{color:var(--ink)}
+.tagSelect:focus{outline:2px solid rgba(34,160,90,.2);background:#fff;border-radius:4px}
+.tagBadge{font-size:14px;line-height:1.1;color:#111;font-weight:800;font-family:"SimHei","Microsoft YaHei","PingFang SC",sans-serif;background:none;border:0;padding:0;cursor:pointer}
+.planToolbar{display:flex;flex-wrap:wrap;gap:10px;align-items:center;margin-bottom:12px}
+.planToolbar label{display:flex;align-items:center;gap:8px;font-weight:700;color:var(--ink)}
+.planToolbar select{min-width:112px;padding:8px 10px;border:1px solid var(--line);border-radius:10px;background:#fff;color:var(--ink)}
+.planStack{display:flex;flex-direction:column;gap:18px}
+.planPanel{border:1px solid var(--line);border-radius:14px;padding:14px;background:#fff}
+.planPanel.planBPanel{background:#f4f5f7}
+.planPanel.planCPanel{background:#f8f8fb}
+.planPanelHeader{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:10px}
+.planPanelHeader h3{font-size:18px}
+.planPanelHint{font-size:12px;color:var(--muted)}
+.planEmpty{padding:18px 12px;border:1px dashed var(--line);border-radius:12px;background:#fbfdfb;color:var(--muted);text-align:center}
+.manualCellSelected{outline:2px solid rgba(34,160,90,.55);outline-offset:-2px;position:relative;z-index:1}
+.compareDiffCell{box-shadow:inset 0 0 0 2px rgba(34,160,90,.45)}
+.summaryRow td{background:#f3faf5!important;font-weight:800}
+.monthlyTable .stickySecond{position:sticky;left:0;z-index:3;background:#fff;box-shadow:2px 0 0 var(--line)}
+.monthlyTable .stickyThird{position:sticky;left:88px;z-index:3;background:#fff;box-shadow:2px 0 0 var(--line)}
+.monthlyTable th.stickySecond,.monthlyTable th.stickyThird{background:#edf8f0;z-index:5}
+.monthlyTable thead th{position:sticky;top:0;z-index:7;background:#edf8f0;box-shadow:0 2px 0 var(--line)}
+.monthlyTable thead th.stickySecond,.monthlyTable thead th.stickyThird,.monthlyTable thead th.stickyCount{z-index:9}
+.monthlyTable thead th.holidayHead{background:#f5c542;color:#4a3200}
+.monthlyTable .summaryStickyLabel{position:sticky;left:0;z-index:4;background:#f3faf5!important;box-shadow:2px 0 0 var(--line);text-align:left}
+.monthlyTable .stickyCount{position:sticky;z-index:4;background:#fff;min-width:88px}
+.monthlyTable .stickyWork{right:88px;box-shadow:-2px 0 0 var(--line)}
+.monthlyTable .stickyRest{right:0}
+.monthlyTable th.stickyCount{background:#edf8f0;z-index:6}
+.summaryRow .stickyCount{background:#f3faf5!important}
+.keyDayCell,.keyDayCell .scheduleSelect{font-weight:800}
+.draggablePersonRow{cursor:grab}
+.draggablePersonRow:active{cursor:grabbing}
+.draggablePersonRow.dragOver td{box-shadow:inset 0 2px 0 var(--blue)}
+.dragHandle{cursor:grab}
+.dragOver{outline:2px solid var(--blue);outline-offset:-2px}
+.stats{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px}
+.pill{border:1px solid var(--line);border-radius:999px;padding:6px 10px;background:#fff;font-size:13px}
+.holidayPicker{display:flex;flex-direction:column;gap:10px}
+.holidaySummary{min-height:38px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;font-size:13px;line-height:1.5;color:var(--ink)}
+.holidayCalendar{border:1px solid var(--line);border-radius:8px;padding:12px;background:#f3faf5}
+.holidayWeekdays,.holidayGrid{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:6px}
+.holidayWeekdays span{font-size:12px;color:var(--muted);text-align:center}
+.holidayDay{min-height:40px;border:1px solid var(--line);border-radius:6px;background:#fff;color:var(--ink);font-size:13px;cursor:pointer;margin:0;padding:0;width:100%;height:auto;box-shadow:none}
+.holidayDay.muted{background:#eef5f0;color:#98a2b3;cursor:default}
+.holidayDay.active{background:#22a05a;color:#fff;border-color:#22a05a;font-weight:700}
+.holidayActions{display:flex;gap:8px;margin-top:10px}
+.holidayActions button{margin:0}
+.blockedDatePicker{display:flex;flex-direction:column;gap:8px}
+.blockedDateSummary{min-height:30px;border:1px solid var(--line);border-radius:8px;padding:5px 8px;background:#fff;font-size:12px;line-height:1.35;color:var(--ink);font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.blockedDateCalendar{border:1px solid var(--line);border-radius:8px;padding:6px;background:#f3faf5;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.blockedDateCalendarTitle{margin:0 0 6px;font-size:11px;font-weight:700;color:var(--ink);text-align:center}
+.blockedDateCalendar .holidayWeekdays,.blockedDateCalendar .holidayGrid{gap:5px}
+.blockedDateCalendar .holidayWeekdays span{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;font-size:11px}
+.blockedDateCalendar .holidayDay{min-height:28px;font-size:11px;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.blockedDateCalendar .holidayDay.holidayMarked{background:#f5c542;border-color:#f5c542;color:#4a3200;font-weight:700}
+.blockedDateCalendar .holidayDay.weekendMarked{font-weight:700}
+.blockedDateCalendar .holidayDay.active.holidayMarked{background:#22a05a;border-color:#22a05a;color:#fff}
+.multiPicker{display:flex;flex-direction:column;gap:10px}
+.multiSummary{min-height:38px;border:1px solid var(--line);border-radius:6px;padding:8px 10px;background:#fff;font-size:13px;line-height:1.5;color:var(--ink)}
+.multiPanel{border:1px solid var(--line);border-radius:8px;padding:12px;background:#f3faf5}
+.multiOptions{display:grid;gap:8px}
+.multiOption{display:flex;align-items:center;gap:8px;background:#fff;border:1px solid var(--line);border-radius:6px;padding:8px 10px}
+.multiOption input{width:auto}
+.peopleEditor{display:flex;flex-direction:column;gap:8px}
+.peopleList{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}
+.personCard{border:1px solid var(--line);border-radius:10px;padding:7px 8px;background:#f5fbf7}
+.personHead{display:flex;align-items:center;gap:6px;margin-bottom:2px}
+.personHead strong{font-size:13px;line-height:1.2}
+.personGroupTag{display:inline-flex;align-items:center;height:18px;padding:0 6px;border-radius:999px;background:#e8f5ec;color:var(--muted);font-size:10px;font-weight:700}
+.personBlock{display:flex;flex-direction:column;gap:4px;margin-top:4px;margin-left:12px}
+.personSummary{min-height:30px;border:1px solid var(--line);border-radius:5px;padding:6px 8px;background:#fff;font-size:12px;line-height:1.35}
+.personPanel{border:1px solid var(--line);border-radius:7px;padding:8px;background:#fff}
+.personPanelRow{display:grid;grid-template-columns:1fr;gap:8px;align-items:end;margin-bottom:8px}
+.personPanelRow button{height:32px;padding:0 12px;font-size:12px;margin:0}
+.blockedList{display:flex;flex-direction:column;gap:6px}
+.blockedItem{display:grid;grid-template-columns:1fr auto auto;gap:6px;align-items:center;border:1px solid var(--line);border-radius:5px;padding:6px;background:#f5fbf7}
+.specialText{min-height:80px;max-height:80px}
+.personToggle{display:flex;align-items:flex-start;gap:6px;color:var(--ink);font-size:12px;line-height:1.35}
+.personToggle input{width:auto}
+.ruleBox{border:1px solid var(--line);border-radius:8px;padding:14px;background:#f5fbf7}
+.ruleBox h3{font-size:16px;margin-bottom:8px}
+.ruleCheck{display:flex;align-items:center;gap:8px;margin-bottom:8px;color:var(--ink)}
+.ruleCheck input{width:auto}
+@media(max-width:1200px){.peopleList{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:1000px){.grid,.personPanelRow,.peopleList{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<main>
+  <h1>&#26234;&#33021;&#25490;&#29677;&#24037;&#20855;</h1>
+
+  <section class="card grid">
+    <label>&#25490;&#29677;&#26376;&#20221;
+      <input id="month" type="month">
+    </label>
+    <label>&#40664;&#35748;&#24212;&#20986;&#21220;&#22825;&#25968;
+      <input id="targetWork" type="number" value="21" min="0">
+    </label>
+    <label>&#40664;&#35748;&#24212;&#20241;&#24687;&#22825;&#25968;
+      <input id="targetRest" type="number" value="10" min="0">
+    </label>
+    <label>&#27861;&#23450;&#33410;&#20551;&#26085;
+      <div class="holidayPicker">
+        <input id="holidays" type="hidden">
+        <div id="holidaySummary" class="holidaySummary">&#26410;&#30830;&#35748;&#27861;&#23450;&#33410;&#20551;&#26085;</div>
+        <button id="holidayToggle" type="button" class="secondary">&#36873;&#25321;&#27861;&#23450;&#33410;&#20551;&#26085;</button>
+        <div id="holidayCalendar" class="holidayCalendar" hidden></div>
+      </div>
+    </label>
+    <label>&#19978;&#26376;&#30005;&#21830;&#21608;&#26411;&#20540;&#29677;&#20154;&#21592;
+      <div class="multiPicker">
+        <input id="lastEcomWeekend" type="hidden">
+        <div id="lastEcomWeekendSummary" class="multiSummary">&#26410;&#30830;&#35748;&#19978;&#26376;&#30005;&#21830;&#21608;&#26411;&#20540;&#29677;&#20154;&#21592;</div>
+        <button id="lastEcomWeekendToggle" type="button" class="secondary">&#36873;&#25321;&#19978;&#26376;&#30005;&#21830;&#21608;&#26411;&#20540;&#29677;&#20154;&#21592;</button>
+        <div id="lastEcomWeekendPanel" class="multiPanel" hidden></div>
+      </div>
+    </label>
+    <label>&#19978;&#26376;&#25216;&#26415;&#21608;&#26411;&#20540;&#29677;&#20154;&#21592;
+      <div class="multiPicker">
+        <input id="lastTechWeekend" type="hidden">
+        <div id="lastTechWeekendSummary" class="multiSummary">&#26410;&#30830;&#35748;&#19978;&#26376;&#25216;&#26415;&#21608;&#26411;&#20540;&#29677;&#20154;&#21592;</div>
+        <button id="lastTechWeekendToggle" type="button" class="secondary">&#36873;&#25321;&#19978;&#26376;&#25216;&#26415;&#21608;&#26411;&#20540;&#29677;&#20154;&#21592;</button>
+        <div id="lastTechWeekendPanel" class="multiPanel" hidden></div>
+      </div>
+    </label>
+  </section>
+
+  <section class="card">
+    <div class="peopleEditor">
+      <h2>&#20154;&#21592;&#25490;&#29677;&#35774;&#32622;</h2>
+      <div id="peopleEditor" class="peopleList"></div>
+      <textarea id="ecom" hidden></textarea>
+      <textarea id="tech" hidden></textarea>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2>&#19978;&#26376;&#25490;&#29677;&#34920;</h2>
+    <p class="small">&#20174;&#19978;&#26376; Excel &#20013;&#22797;&#21046;&#8220;&#26376;&#24230;&#25490;&#29677;&#34920;&#8221;&#21306;&#22495;&#65292;&#30452;&#25509;&#31896;&#36148;&#21040;&#36825;&#37324;&#12290;&#31995;&#32479;&#20250;&#35835;&#21462;&#27599;&#20010;&#20154;&#19978;&#26376;&#26376;&#24213;&#36830;&#32493;&#19978;&#29677;&#25110;&#36830;&#32493;&#20241;&#24687;&#30340;&#22825;&#25968;&#65292;&#29992;&#20110;&#26412;&#26376;&#36328;&#26376;&#36830;&#32493;&#21028;&#26029;&#12290;</p>
+    <textarea id="prevSchedule" placeholder="&#31896;&#36148;&#19978;&#26376;&#25490;&#29677;&#34920;&#65292;&#20363;&#22914;&#65306;&#32452;&#21035;,&#22995;&#21517;,1&#26085;,2&#26085;,...,31&#26085;,&#20986;&#21220;&#22825;&#25968;,&#20241;&#24687;&#22825;&#25968;"></textarea>
+  </section>
+
+  <section class="card">
+    <div class="planToolbar">
+      <label>当前方案
+        <select id="planSelect">
+          <option value="planA">方案A</option>
+          <option value="planB">方案B</option>
+          <option value="planC">方案C</option>
+        </select>
+      </label>
+      <button id="copyPlanBtn" type="button" class="secondary">复制当前方案</button>
+    </div>
+    <button onclick="writePrevMonthTailData()">&#20889;&#20837;&#19978;&#26376;&#26411;&#25490;&#29677;&#25968;&#25454;</button>
+    <button id="generateBtn" onclick="handleGenerateClick()">&#29983;&#25104;&#25490;&#29677;</button>
+    <button id="saveCurrentBtn" type="button" class="secondary">&#20445;&#23384;&#24403;&#21069;&#25490;&#29677;</button>
+    <button id="refreshCurrentBtn" type="button" class="secondary">&#21047;&#26032;&#26368;&#26032;&#25490;&#29677;</button>
+    <button id="clearCurrentBtn" type="button" class="secondary">&#28165;&#31354;&#24403;&#21069;&#25490;&#29677;</button>
+    <button id="globalModeBtn" type="button" class="secondary">&#20840;&#23616;&#27169;&#24335;</button>
+    <button class="secondary" onclick="downloadStyledExcel()">&#19979;&#36733;&#25490;&#29677; Excel</button>
+    <button class="secondary" onclick="downloadScheduleImage()">&#29983;&#25104;&#26376;&#24230;&#25490;&#29677;&#22270;&#29255;</button>
+    <button id="saveImageBtn" type="button" class="secondary" disabled>&#20445;&#23384; PNG</button>
+    <div id="summaryPills" class="stats"></div>
+  </section>
+
+  <section class="card scroll monthlyScroll">
+    <h2>&#26376;&#24230;&#25490;&#29677;&#34920;</h2>
+    <div id="monthlyPlans" class="planStack">
+      <div id="monthly"></div>
+      <div id="monthlyPlanB"></div>
+      <div id="monthlyPlanC"></div>
+    </div>
+  </section>
+
+  <section class="card scroll">
+    <h2>&#27599;&#26085;&#35206;&#30422;&#26816;&#26597;&#34920;</h2>
+    <div id="coverage"></div>
+  </section>
+
+  <section class="card scroll">
+    <h2>&#20010;&#20154;&#32479;&#35745;&#34920;</h2>
+    <div id="personStats"></div>
+  </section>
+</main>
+
+<script>
+const $ = id => document.getElementById(id);
+
+const TEXT = {
+  shiftNormal: "\u6b63\u73ed",
+  shiftMid1: "\u4e2d1\u73ed",
+  shiftMid2: "\u4e2d2\u73ed",
+  shiftRest: "\u4f11\u606f",
+  emptyHoliday: "\u672a\u786e\u8ba4\u6cd5\u5b9a\u8282\u5047\u65e5",
+  emptyLastEcom: "\u672a\u786e\u8ba4\u4e0a\u6708\u7535\u5546\u5468\u672b\u503c\u73ed\u4eba\u5458",
+  emptyLastTech: "\u672a\u786e\u8ba4\u4e0a\u6708\u6280\u672f\u5468\u672b\u503c\u73ed\u4eba\u5458",
+  titleLastEcom: "\u4e0a\u6708\u7535\u5546\u5468\u672b\u503c\u73ed\u4eba\u5458",
+  titleLastTech: "\u4e0a\u6708\u6280\u672f\u5468\u672b\u503c\u73ed\u4eba\u5458",
+  autoPick: "\u81ea\u52a8\u9009\u62e9",
+  needMonth: "\u8bf7\u5148\u9009\u62e9\u6392\u73ed\u6708\u4efd",
+  needDate: "\u8bf7\u5148\u9009\u62e9\u65e5\u671f",
+  needMonthShort: "\u8bf7\u5148\u9009\u62e9\u6708\u4efd",
+  invalidBlockMonth: "\u4e0d\u53ef\u6392\u73ed\u65e5\u671f\u5fc5\u987b\u5c5e\u4e8e\u5f53\u524d\u6392\u73ed\u6708\u4efd",
+  noBlockedDates: "\u672a\u8bbe\u7f6e\u4e0d\u53ef\u6392\u73ed\u65e5\u671f",
+  noBlockedDraft: "\u5c1a\u672a\u9009\u62e9\u4e0d\u53ef\u6392\u73ed\u65e5\u671f\u3002",
+  validationPrefix: "\u7f51\u9875\u53c2\u6570\u6821\u9a8c\u672a\u901a\u8fc7\uff0c\u8bf7\u5148\u8c03\u6574\u4ee5\u4e0b\u5185\u5bb9\uff1a",
+  pleaseGenerate: "\u8bf7\u5148\u751f\u6210\u6392\u73ed",
+  blockedPublish: "\u6392\u73ed\u7ed3\u679c\u5df2\u88ab\u62e6\u622a\uff0c\u4e0d\u80fd\u4f5c\u4e3a\u6700\u7ec8\u6392\u73ed\u53d1\u5e03\u3002",
+  blockedAdjust: "\u8bf7\u7ba1\u7406\u5458\u6839\u636e\u4ee5\u4e0b\u7b49\u7ea71\u89c4\u5219\u95ee\u9898\u91cd\u65b0\u8c03\u6574\uff1a",
+  confirmPublish: "\u6392\u73ed\u5df2\u751f\u6210\uff0c\u4f46\u5b58\u5728\u7b49\u7ea72\u5f3a\u7ea6\u675f\u5f02\u5e38\uff0c\u9700\u8981\u7ba1\u7406\u5458\u786e\u8ba4\u540e\u624d\u53ef\u53d1\u5e03\u3002",
+  confirmFocus: "\u8bf7\u91cd\u70b9\u786e\u8ba4\u4ee5\u4e0b\u95ee\u9898\uff1a",
+  generateLabel: "\u751f\u6210\u6392\u73ed",
+  regenerateLabel: "\u91cd\u65b0\u751f\u6210\u6392\u73ed",
+  generationInitial: "\u9996\u6b21\u751f\u6210",
+  generationChanged: "\u5df2\u8bfb\u53d6\u65b0\u8bbe\u7f6e\u5e76\u91cd\u65b0\u751f\u6210",
+  generationUnchanged: "\u672a\u68c0\u6d4b\u5230\u8bbe\u7f6e\u53d8\u66f4\uff0c\u5df2\u91cd\u65b0\u751f\u6210"
+};
+
+const COLORS = {
+  Amber:"#fff2b2", Daisy:"#ffd6a5", Zoey:"#caffbf", Nikki:"#bde0fe",
+  John:"#a7c7ff", Arya:"#cdb4db", Barry:"#ffc8dd", Carry:"#b9fbc0",
+  Zenia:"#fde68a", Riley:"#bae6fd", Calvin:"#ddd6fe", Amiee:"#fecaca"
+};
+
+const SHIFT_NORMAL = TEXT.shiftNormal;
+const SHIFT_MID1 = TEXT.shiftMid1;
+const SHIFT_MID2 = TEXT.shiftMid2;
+const SHIFT_REST = TEXT.shiftRest;
+const SHIFT_BLANK = "";
+const SHIFT_LEAVE_MANUAL = "\u8bf7\u5047";
+const MANUAL_TAG_CHAT = "chat";
+const MANUAL_TAG_STAR = "star";
+const MANUAL_TAG_OPTIONS = [
+  { value: MANUAL_TAG_CHAT, label: "Chat", display: "(Chat)" },
+  { value: MANUAL_TAG_STAR, label: "(*)", display: "(*)" }
+];
+const SHIFT_WORK = new Set([SHIFT_NORMAL, SHIFT_MID1, SHIFT_MID2]);
+const SHIFT_ALLOWED = new Set([SHIFT_NORMAL, SHIFT_MID1, SHIFT_MID2, SHIFT_REST, SHIFT_BLANK]);
+
+const PERSON_DEFAULTS = {
+  ecom: ["Zoey","Amber","Daisy","Nikki"],
+  tech: ["Alisa","John","Arya","Barry","Carry","Zenia","Riley","Calvin","Amiee"]
+};
+const ALWAYS_DUTY_SEAT_NAMES = new Set(["Calvin"]);
+const PERSON_CN_NAMES = {
+  Alisa: "邱雨婷",
+  John: "钟华",
+  Arya: "黄珂",
+  Barry: "林万武",
+  Carry: "徐瑞凯",
+  Zenia: "游子珍",
+  Riley: "刘红霞",
+  Calvin: "卢博文",
+  Amiee: "聂伊琪",
+  Zoey: "岑文婷",
+  Amber: "黄轩",
+  Daisy: "袁生萍",
+  Nikki: "黄倪勋"
+};
+function normalizeBackupFlag(name, isBackup){
+  if(ALWAYS_DUTY_SEAT_NAMES.has(name)) return false;
+  return Boolean(isBackup);
+}
+
+const LEAVE_MODE_OPTIONS = [
+  { value:"all", label:"\u5168\u5929\u8bf7\u5047\uff08\u4e0d\u53ef\u6392\u4efb\u4f55\u73ed\u6b21\uff09" },
+  { value:"custom_rest", label:"\u81ea\u5b9a\u4e49\u4f11\u606f\u65e5" },
+  { value:"morning_normal_only", label:"\u4e0a\u5348\u8bf7\u5047\uff08\u4ec5\u7981\u6b63\u73ed\uff09" },
+  { value:"normal_only", label:"\u4ec5\u7981\u6b63\u73ed" },
+  { value:"mid1_only", label:"\u4ec5\u7981\u4e2d1\u73ed" },
+  { value:"mid2_only", label:"\u4ec5\u7981\u4e2d2\u73ed" },
+  { value:"mid_shifts", label:"\u7981\u4e2d1\u73ed\u548c\u4e2d2\u73ed" }
+];
+
+let latest = null;
+let lastGeneratedConfigSnapshot = "";
+let lastSharedScheduleSavedAt = "";
+let currentPlanKey = "planA";
+let comparePlanKey = "";
+let editingTagKey = "";
+let selectedManualCellKey = "";
+let selectedManualCellKeys = new Set();
+let manualSelectionAnchorKey = "";
+let manualSelectionDragActive = false;
+let pendingHolidaySelection = new Set();
+const pendingMultiSelections = {
+  lastEcomWeekend: new Set(),
+  lastTechWeekend: new Set()
+};
+const groupEditors = {
+  ecom: [],
+  tech: []
+};
+const PLAN_OPTIONS = [
+  { key:"planA", label:"方案A" },
+  { key:"planB", label:"方案B" },
+  { key:"planC", label:"方案C" }
+];
+const REMOTE_HOLIDAY_RULE_SITE = "https://zhineng-kefu-paiban.just-lamp-1904.chatgpt.site";
+const LOCAL_HOLIDAY_RULES = {
+  "2026": {
+    holidays: [
+      "2026-01-01","2026-01-02","2026-01-03",
+      "2026-02-15","2026-02-16","2026-02-17","2026-02-18","2026-02-19","2026-02-20","2026-02-21","2026-02-22","2026-02-23",
+      "2026-04-04","2026-04-05","2026-04-06",
+      "2026-05-01","2026-05-02","2026-05-03","2026-05-04","2026-05-05",
+      "2026-06-19","2026-06-20","2026-06-21",
+      "2026-09-25","2026-09-26","2026-09-27",
+      "2026-10-01","2026-10-02","2026-10-03","2026-10-04","2026-10-05","2026-10-06","2026-10-07"
+    ],
+    makeupWorkdays: [
+      "2026-01-04",
+      "2026-02-14","2026-02-28",
+      "2026-05-09",
+      "2026-09-20",
+      "2026-10-10"
+    ]
+  }
+};
+const holidayRuleCache = new Map();
+let sharedScheduleBundle = createEmptySharedScheduleBundle();
+
+function pad(n){ return String(n).padStart(2, "0"); }
+function iso(y, m, d){ return `${y}-${pad(m)}-${pad(d)}`; }
+function daysInMonth(month){
+  const [y, m] = month.split("-").map(Number);
+  return new Date(y, m, 0).getDate();
+}
+function isDateInCurrentMonth(date){
+  const month = $("month").value;
+  return Boolean(month && String(date || "").startsWith(`${month}-`));
+}
+function dow(date){ return new Date(date + "T00:00:00").getDay(); }
+function weekName(date){ return "\u65e5\u4e00\u4e8c\u4e09\u56db\u4e94\u516d"[dow(date)]; }
+function isWeekend(date){ return dow(date) === 0 || dow(date) === 6; }
+function isWeekday(date){ return !isWeekend(date); }
+function isMonWed(date){ return [1,2,3].includes(dow(date)); }
+function isKeyDisplayDay(date){ return [0,1,6].includes(dow(date)); }
+function splitDates(v){
+  return new Set(String(v || "").split(/[|,\uff0c\u3001\s]+/).map(x=>x.trim()).filter(Boolean));
+}
+function sortDateValues(values){
+  return [...values].sort((a, b)=>a.localeCompare(b, "zh-Hans-CN"));
+}
+function esc(v){
+  return String(v ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#039;"
+  }[c]));
+}
+function cloneHolidayRuleSet(rules){
+  return {
+    holidays: [...(rules?.holidays || [])],
+    makeupWorkdays: [...(rules?.makeupWorkdays || [])]
+  };
+}
+function getHolidayRuleYear(month){
+  return String(month || "").slice(0, 4);
+}
+function getLocalHolidayRuleSet(year){
+  return cloneHolidayRuleSet(LOCAL_HOLIDAY_RULES[year]);
+}
+function normalizeHolidayRulePayload(payload){
+  return cloneHolidayRuleSet(payload?.rules || payload);
+}
+function getHolidayRuleApiUrls(month){
+  const query = `month=${encodeURIComponent(month || "")}`;
+  const urls = [];
+  if(/^https?:$/.test(window.location.protocol)){
+    urls.push(new URL(`/api/holiday-rules?${query}`, window.location.href).toString());
+  }
+  urls.push(`${REMOTE_HOLIDAY_RULE_SITE}/api/holiday-rules?${query}`);
+  return [...new Set(urls)];
+}
+async function loadHolidayRulesForMonth(month, options = {}){
+  const year = getHolidayRuleYear(month);
+  if(!year) return cloneHolidayRuleSet();
+  if(!options.force && holidayRuleCache.has(year)){
+    return cloneHolidayRuleSet(holidayRuleCache.get(year));
+  }
+  const fallbackRules = getLocalHolidayRuleSet(year);
+  for(const url of getHolidayRuleApiUrls(month)){
+    try{
+      const response = await fetch(url, {
+        headers: { "Accept": "application/json" },
+        cache: "no-store"
+      });
+      if(!response.ok) continue;
+      const payload = await response.json();
+      const rules = normalizeHolidayRulePayload(payload);
+      if(rules.holidays.length || rules.makeupWorkdays.length){
+        holidayRuleCache.set(year, rules);
+        return cloneHolidayRuleSet(rules);
+      }
+    }catch(error){
+      console.warn("holiday-rules fetch failed", url, error);
+    }
+  }
+  holidayRuleCache.set(year, fallbackRules);
+  return cloneHolidayRuleSet(fallbackRules);
+}
+function getCachedHolidayRulesForMonth(month){
+  const year = getHolidayRuleYear(month);
+  if(!year) return cloneHolidayRuleSet();
+  return cloneHolidayRuleSet(holidayRuleCache.get(year) || LOCAL_HOLIDAY_RULES[year]);
+}
+function getOfficialHolidayDatesForMonth(month){
+  const rules = getCachedHolidayRulesForMonth(month);
+  return new Set(
+    rules.holidays.filter(date=>String(date).startsWith(`${month}-`))
+  );
+}
+function getOfficialMakeupWorkDatesForMonth(month){
+  const rules = getCachedHolidayRulesForMonth(month);
+  return new Set(
+    rules.makeupWorkdays.filter(date=>String(date).startsWith(`${month}-`))
+  );
+}
+function calculateDefaultTargets(month, holidays){
+  if(!month) return { work:0, rest:0 };
+  const [y, m] = month.split("-").map(Number);
+  if(!y || !m) return { work:0, rest:0 };
+  const dim = daysInMonth(month);
+  const makeupWorkdays = getOfficialMakeupWorkDatesForMonth(month);
+  let work = 0;
+  for(let day = 1; day <= dim; day++){
+    const date = iso(y, m, day);
+    const isOfficialHoliday = holidays.has(date);
+    const isOfficialMakeupWorkday = makeupWorkdays.has(date);
+    if(isOfficialMakeupWorkday || (isWeekday(date) && !isOfficialHoliday)) work++;
+  }
+  return { work, rest: dim - work };
+}
+function refreshDefaultTargets(){
+  const month = $("month").value;
+  const holidays = splitDates($("holidays").value);
+  const targets = calculateDefaultTargets(month, holidays);
+  $("targetWork").value = targets.work;
+  $("targetRest").value = targets.rest;
+  renderGroupEditors();
+}
+async function applyOfficialMonthDefaults(){
+  const month = $("month").value;
+  if(!month) return;
+  await loadHolidayRulesForMonth(month);
+  syncHolidayInput(getOfficialHolidayDatesForMonth(month));
+  syncHolidaySummary();
+  pendingHolidaySelection = new Set(splitDates($("holidays").value));
+  refreshDefaultTargets();
+}
+
+function syncHolidayInput(set){
+  $("holidays").value = sortDateValues(set).join("|");
+}
+function syncHolidaySummary(){
+  const values = sortDateValues(splitDates($("holidays").value));
+  $("holidaySummary").textContent = values.length ? values.join(" | ") : TEXT.emptyHoliday;
+}
+function openHolidayCalendar(){
+  pendingHolidaySelection = new Set(splitDates($("holidays").value));
+  $("holidayCalendar").hidden = false;
+  $("holidayToggle").textContent = "\u6536\u8d77\u6cd5\u5b9a\u8282\u5047\u65e5\u65e5\u5386";
+  renderHolidayCalendar();
+}
+function closeHolidayCalendar(){
+  $("holidayCalendar").hidden = true;
+  $("holidayToggle").textContent = "\u9009\u62e9\u6cd5\u5b9a\u8282\u5047\u65e5";
+}
+function confirmHolidaySelection(){
+  syncHolidayInput(pendingHolidaySelection);
+  syncHolidaySummary();
+  closeHolidayCalendar();
+  refreshDefaultTargets();
+}
+function cancelHolidaySelection(){
+  pendingHolidaySelection = new Set(splitDates($("holidays").value));
+  closeHolidayCalendar();
+}
+function toggleHolidayDate(date){
+  if(pendingHolidaySelection.has(date)) pendingHolidaySelection.delete(date);
+  else pendingHolidaySelection.add(date);
+  renderHolidayCalendar();
+}
+function renderHolidayCalendar(){
+  const month = $("month").value;
+  const mountPoint = $("holidayCalendar");
+  if(!month){
+    mountPoint.innerHTML = '<p class="small">\u8bf7\u5148\u9009\u62e9\u6392\u73ed\u6708\u4efd\uff0c\u518d\u70b9\u9009\u6cd5\u5b9a\u8282\u5047\u65e5\u3002</p>';
+    return;
+  }
+
+  const [y, m] = month.split("-").map(Number);
+  const totalDays = daysInMonth(month);
+  const firstDow = dow(iso(y, m, 1));
+  const weekdayNames = ["\u65e5","\u4e00","\u4e8c","\u4e09","\u56db","\u4e94","\u516d"];
+
+  let cells = "";
+  for(let i = 0; i < firstDow; i++) cells += '<button type="button" class="holidayDay muted" disabled></button>';
+  for(let day = 1; day <= totalDays; day++){
+    const date = iso(y, m, day);
+    const active = pendingHolidaySelection.has(date) ? " active" : "";
+    cells += `<button type="button" class="holidayDay${active}" data-date="${date}" title="${date}">${day}</button>`;
+  }
+
+  mountPoint.innerHTML = `
+    <div class="holidayWeekdays">${weekdayNames.map(name=>`<span>${name}</span>`).join("")}</div>
+    <div class="holidayGrid">${cells}</div>
+    <p class="small">\u70b9\u51fb\u65e5\u671f\u5373\u53ef\u6dfb\u52a0\u6216\u53d6\u6d88\u6cd5\u5b9a\u8282\u5047\u65e5\uff0c\u5df2\u9009 ${pendingHolidaySelection.size} \u5929\u3002</p>
+    <div class="holidayActions">
+      <button type="button" id="holidayConfirm">\u786e\u5b9a</button>
+      <button type="button" id="holidayCancel" class="secondary">\u53d6\u6d88</button>
+    </div>
+  `;
+
+  mountPoint.querySelectorAll("[data-date]").forEach(btn=>{
+    btn.addEventListener("click", ()=>toggleHolidayDate(btn.dataset.date));
+  });
+  $("holidayConfirm").addEventListener("click", confirmHolidaySelection);
+  $("holidayCancel").addEventListener("click", cancelHolidaySelection);
+}
+
+function syncMultiInput(inputId, set){
+  $(inputId).value = sortDateValues(set).join("|");
+}
+function syncMultiSummary(inputId, emptyText){
+  const values = sortDateValues(splitDates($(inputId).value));
+  $(`${inputId}Summary`).textContent = values.length ? values.join(" | ") : emptyText;
+}
+function renderMultiPicker(inputId, names, emptyText, title){
+  const panel = $(`${inputId}Panel`);
+  const selected = pendingMultiSelections[inputId];
+  panel.innerHTML = `
+    <div class="multiOptions">
+      ${names.length ? names.map(name=>`
+        <label class="multiOption">
+          <input type="checkbox" value="${esc(name)}" ${selected.has(name) ? "checked" : ""}>
+          <span>${esc(name)}</span>
+        </label>
+      `).join("") : `<p class="small">${title}\u6682\u65e0\u53ef\u9009\u4eba\u5458\u3002</p>`}
+    </div>
+    <div class="holidayActions">
+      <button type="button" id="${inputId}Confirm">\u786e\u5b9a</button>
+      <button type="button" id="${inputId}Cancel" class="secondary">\u53d6\u6d88</button>
+    </div>
+  `;
+  panel.querySelectorAll("input[type='checkbox']").forEach(box=>{
+    box.addEventListener("change", ()=>{
+      if(box.checked) selected.add(box.value);
+      else selected.delete(box.value);
+    });
+  });
+  $(`${inputId}Confirm`).addEventListener("click", ()=>confirmMultiPicker(inputId, emptyText));
+  $(`${inputId}Cancel`).addEventListener("click", ()=>cancelMultiPicker(inputId));
+}
+function openMultiPicker(inputId, names, emptyText, title){
+  pendingMultiSelections[inputId] = new Set(splitDates($(inputId).value));
+  $(`${inputId}Panel`).hidden = false;
+  $(`${inputId}Toggle`).textContent = `\u6536\u8d77${title}`;
+  renderMultiPicker(inputId, names, emptyText, title);
+}
+function closeMultiPicker(inputId, title){
+  $(`${inputId}Panel`).hidden = true;
+  $(`${inputId}Toggle`).textContent = `\u9009\u62e9${title}`;
+}
+function confirmMultiPicker(inputId, emptyText){
+  syncMultiInput(inputId, pendingMultiSelections[inputId]);
+  syncMultiSummary(inputId, emptyText);
+  const title = inputId === "lastEcomWeekend" ? TEXT.titleLastEcom : TEXT.titleLastTech;
+  closeMultiPicker(inputId, title);
+}
+function cancelMultiPicker(inputId){
+  pendingMultiSelections[inputId] = new Set(splitDates($(inputId).value));
+  const title = inputId === "lastEcomWeekend" ? TEXT.titleLastEcom : TEXT.titleLastTech;
+  closeMultiPicker(inputId, title);
+}
+
+function cloneBlockedRules(rules){
+  return (rules || []).map(rule=>({ date:rule.date, mode:rule.mode }));
+}
+function parseBlockedRuleString(value){
+  return String(value || "").split("|").map(x=>x.trim()).filter(Boolean).map(item=>{
+    const [date, mode] = item.split("@");
+    return date && mode ? { date, mode } : null;
+  }).filter(Boolean);
+}
+function serializeBlockedRules(rules){
+  return (rules || []).map(rule=>`${rule.date}@${rule.mode}`).join("|");
+}
+function expandDayRange(start, end){
+  const month = $("month").value;
+  if(!month) return [];
+  const [y, m] = month.split("-").map(Number);
+  const maxDay = daysInMonth(month);
+  const from = Math.max(1, Math.min(start, end));
+  const to = Math.min(maxDay, Math.max(start, end));
+  const dates = [];
+  for(let day = from; day <= to; day++) dates.push(iso(y, m, day));
+  return dates;
+}
+function leaveModeLabel(mode){
+  return LEAVE_MODE_OPTIONS.find(option=>option.value === mode)?.label || mode;
+}
+function formatBlockedRulesSummary(rules){
+  if(!rules?.length) return TEXT.noBlockedDates;
+  return rules.map(rule=>`${rule.date} ${leaveModeLabel(rule.mode)}`).join("\uff1b");
+}
+function getPersonEditor(groupKey, index){
+  return groupEditors[groupKey][index];
+}
+function syncGroupTextarea(groupKey){
+  const text = groupEditors[groupKey].map(person=>[
+    person.name,
+    "",
+    "",
+    serializeBlockedRules(person.blockedRules),
+    person.isBackup ? "1" : "0"
+  ].join(",")).join("\n");
+  $(groupKey).value = text;
+}
+function syncAllGroupTextareas(){
+  syncGroupTextarea("ecom");
+  syncGroupTextarea("tech");
+}
+function createDefaultGroupEditors(){
+  groupEditors.ecom = PERSON_DEFAULTS.ecom.map(name=>({
+    name, blockedRules:[], blockedDraft:[], blockedPanelOpen:false, blockedDraftDates:[], blockedDateCalendarOpen:false, isBackup:normalizeBackupFlag(name, false)
+  }));
+  groupEditors.tech = PERSON_DEFAULTS.tech.map(name=>({
+    name, blockedRules:[], blockedDraft:[], blockedPanelOpen:false, blockedDraftDates:[], blockedDateCalendarOpen:false, isBackup:normalizeBackupFlag(name, false)
+  }));
+}
+function sortBlockedDraftDates(values){
+  return [...new Set((values || []).filter(Boolean))].sort((a, b)=>a.localeCompare(b, "zh-Hans-CN"));
+}
+function formatBlockedDraftDate(values){
+  const dates = sortBlockedDraftDates(values);
+  return dates.length ? dates.join(" | ") : "未选择日期";
+}
+function renderBlockedDateCalendar(groupKey, index){
+  const person = getPersonEditor(groupKey, index);
+  const month = $("month").value;
+  if(!person) return "";
+  if(!month) return `<p class="small">请先选择排班月份，再设置不可排班日期。</p>`;
+  const [y, m] = month.split("-").map(Number);
+  const totalDays = daysInMonth(month);
+  const firstDow = dow(iso(y, m, 1));
+  const weekdayNames = ["日","一","二","三","四","五","六"];
+  const holidayDates = getOfficialHolidayDatesForMonth(month);
+  let cells = "";
+  for(let i = 0; i < firstDow; i++) cells += '<button type="button" class="holidayDay muted" disabled></button>';
+  for(let day = 1; day <= totalDays; day++){
+    const date = iso(y, m, day);
+    const classes = ["holidayDay"];
+    if(person.blockedDraftDates?.includes(date)) classes.push("active");
+    if(holidayDates.has(date)) classes.push("holidayMarked");
+    if(isWeekend(date)) classes.push("weekendMarked");
+    cells += `<button type="button" class="${classes.join(" ")}" data-action="select-blocked-date" data-group="${groupKey}" data-index="${index}" data-date="${date}" title="${date}">${day}</button>`;
+  }
+  return `
+    <div class="blockedDateCalendar">
+      <p class="blockedDateCalendarTitle">${y}年${m}月</p>
+      <div class="holidayWeekdays">${weekdayNames.map(name=>`<span>${name}</span>`).join("")}</div>
+      <div class="holidayGrid">${cells}</div>
+      <p class="small">可连续选择多个日期，黄色为法定节假日。</p>
+    </div>
+  `;
+}
+function renderBlockedDraftItems(groupKey, index){
+  const person = getPersonEditor(groupKey, index);
+  if(!person.blockedDraft.length) return `<p class="small">${TEXT.noBlockedDraft}</p>`;
+  return `<div class="blockedList">${person.blockedDraft.map((rule, ruleIndex)=>`
+    <div class="blockedItem">
+      <span>${rule.date}</span>
+      <select data-action="change-blocked-mode" data-group="${groupKey}" data-index="${index}" data-rule-index="${ruleIndex}">
+        ${LEAVE_MODE_OPTIONS.map(option=>`<option value="${option.value}" ${option.value===rule.mode ? "selected" : ""}>${option.label}</option>`).join("")}
+      </select>
+      <button type="button" class="secondary" data-action="remove-blocked-rule" data-group="${groupKey}" data-index="${index}" data-rule-index="${ruleIndex}">\u5220\u9664</button>
+    </div>
+  `).join("")}</div>`;
+}
+function validateEditorData(){
+  const issues = [];
+  for(const groupKey of Object.keys(groupEditors)){
+    for(const person of groupEditors[groupKey]){
+      const seen = new Set();
+      for(const rule of person.blockedRules){
+        if(!rule.date || !isDateInCurrentMonth(rule.date)){
+          issues.push(`${person.name} \u4e0d\u53ef\u6392\u73ed\u65e5\u671f\u4e0d\u5728\u5f53\u524d\u6392\u73ed\u6708\u4efd\u5185`);
+          continue;
+        }
+        if(seen.has(rule.date)) issues.push(`${person.name} \u540c\u4e00\u5929\u53ea\u80fd\u4fdd\u7559\u4e00\u6761\u4e0d\u53ef\u6392\u73ed\u89c4\u5219`);
+        seen.add(rule.date);
+      }
+    }
+  }
+  return [...new Set(issues)];
+}
+function renderPersonCard(groupKey, person, index){
+  const groupLabel = groupKey === "tech" ? "\u6280\u672f\u5ba2\u670d\u7ec4" : "\u7535\u5546\u5ba2\u670d\u7ec4";
+  return `
+    <div class="personCard">
+      <div class="personHead"><strong>${esc(person.name)}</strong><span class="personGroupTag">${groupLabel}</span></div>
+      <div class="personBlock">
+        <label class="personToggle">
+          <input type="checkbox" data-action="toggle-backup" data-group="${groupKey}" data-index="${index}" ${person.isBackup ? "checked" : ""}>
+          <span>\u8bbe\u4e3a\u66ff\u8865\u4eba\u5458\uff08\u53c2\u4e0e\u6392\u73ed\uff0c\u4f46\u4e0d\u8ba1\u5165\u6b63\u73ed/\u4e2d1/\u4e2d2/\u5468\u672b\u8986\u76d6\uff09</span>
+        </label>
+      </div>
+      <div class="personBlock">
+        <span class="small">\u4e0d\u53ef\u6392\u73ed\u65e5\u671f</span>
+        <div class="personSummary">${esc(formatBlockedRulesSummary(person.blockedRules))}</div>
+        <button type="button" class="secondary" data-action="toggle-blocked-panel" data-group="${groupKey}" data-index="${index}">${person.blockedPanelOpen ? "\u6536\u8d77\u8bbe\u7f6e" : "\u8bbe\u7f6e\u4e0d\u53ef\u6392\u73ed\u65e5\u671f"}</button>
+        ${person.blockedPanelOpen ? `
+          <div class="personPanel">
+            <div class="personPanelRow">
+              <label>\u65e5\u671f
+                <div class="blockedDatePicker">
+                  <div class="blockedDateSummary">${esc(formatBlockedDraftDate(person.blockedDraftDates))}</div>
+                  <button type="button" class="secondary" data-action="toggle-blocked-date-calendar" data-group="${groupKey}" data-index="${index}">${person.blockedDateCalendarOpen ? "\u6536\u8d77\u65e5\u5386" : "\u9009\u62e9\u65e5\u671f"}</button>
+                  ${person.blockedDateCalendarOpen ? renderBlockedDateCalendar(groupKey, index) : ""}
+                </div>
+              </label>
+              <label>\u5f71\u54cd\u73ed\u6b21
+                <select id="${groupKey}-${index}-blocked-mode">
+                  ${LEAVE_MODE_OPTIONS.map(option=>`<option value="${option.value}">${option.label}</option>`).join("")}
+                </select>
+              </label>
+              <button type="button" data-action="add-blocked-rule" data-group="${groupKey}" data-index="${index}">\u6dfb\u52a0</button>
+            </div>
+            ${renderBlockedDraftItems(groupKey, index)}
+            <div class="holidayActions">
+              <button type="button" data-action="confirm-blocked-rules" data-group="${groupKey}" data-index="${index}">\u786e\u5b9a</button>
+              <button type="button" class="secondary" data-action="cancel-blocked-rules" data-group="${groupKey}" data-index="${index}">\u53d6\u6d88</button>
+            </div>
+          </div>
+        ` : ""}
+      </div>
+    </div>
+  `;
+}
+function renderGroupEditors(){
+  const cards = [
+    ...groupEditors.tech.map((person, index)=>renderPersonCard("tech", person, index)),
+    ...groupEditors.ecom.map((person, index)=>renderPersonCard("ecom", person, index))
+  ];
+  $("peopleEditor").innerHTML = cards.join("");
+}
+function parsePeople(text, group){
+  const defaultWork = Number($("targetWork").value || 0);
+  const defaultRest = Number($("targetRest").value || 0);
+  return text.split(/\n+/).map(x=>x.trim()).filter(Boolean).map(line=>{
+    const p = line.split(",").map(x=>x.trim());
+    const blockedRulesArray = parseBlockedRuleString(p[3]);
+    const blockedRules = new Map(blockedRulesArray.map(rule=>[rule.date, rule.mode]));
+    const isBackup = normalizeBackupFlag(p[0], p[4] === "1");
+    return {
+      group, name:p[0], targetWork:Number(p[1] || defaultWork), targetRest:Number(p[2] || defaultRest),
+      blocked:new Set(blockedRulesArray.filter(rule=>rule.mode === "all").map(rule=>rule.date)),
+      blockedRules,
+      wantRest:new Set(),
+      isBackup,
+      days:{}, dayTags:{}, notes:[], carryWork:0, carryRest:0
+    };
+  });
+}
+function parseNames(text){
+  return text.split(/\n+/).map(x=>x.trim()).filter(Boolean).map(line=>line.split(",")[0]?.trim()).filter(Boolean);
+}
+function isShiftBlocked(person, date, shift){
+  const mode = person.blockedRules?.get(date);
+  if(!mode) return false;
+  if(mode === "all") return true;
+  if(mode === "custom_rest") return isWorkShift(shift);
+  if(mode === "morning_normal_only") return shift === SHIFT_NORMAL;
+  if(mode === "normal_only") return shift === SHIFT_NORMAL;
+  if(mode === "mid1_only") return shift === SHIFT_MID1;
+  if(mode === "mid2_only") return shift === SHIFT_MID2;
+  if(mode === "mid_shifts") return shift === SHIFT_MID1 || shift === SHIFT_MID2;
+  return false;
+}
+function isCustomRestMarked(person, date){
+  return person.blockedRules?.get(date) === "custom_rest";
+}
+function isLeaveMarked(p, date){
+  const mode = p.blockedRules?.get(date);
+  return Boolean(mode && mode !== "custom_rest");
+}
+function isCoverageEligible(person){
+  return !person.isBackup;
+}
+function fillSelectOptions(selectId, names, placeholder){
+  const select = $(selectId);
+  const current = select.value;
+  select.innerHTML = [`<option value="">${placeholder}</option>`].concat(
+    names.map(name=>`<option value="${esc(name)}">${esc(name)}</option>`)
+  ).join("");
+  if(names.includes(current)) select.value = current;
+}
+function refreshFixedRuleOptions(){
+  const ecomNames = parseNames($("ecom").value);
+  const techNames = parseNames($("tech").value);
+  pendingMultiSelections.lastEcomWeekend = new Set([...pendingMultiSelections.lastEcomWeekend].filter(name=>ecomNames.includes(name)));
+  pendingMultiSelections.lastTechWeekend = new Set([...pendingMultiSelections.lastTechWeekend].filter(name=>techNames.includes(name)));
+  syncMultiInput("lastEcomWeekend", new Set([...splitDates($("lastEcomWeekend").value)].filter(name=>ecomNames.includes(name))));
+  syncMultiInput("lastTechWeekend", new Set([...splitDates($("lastTechWeekend").value)].filter(name=>techNames.includes(name))));
+  syncMultiSummary("lastEcomWeekend", TEXT.emptyLastEcom);
+  syncMultiSummary("lastTechWeekend", TEXT.emptyLastTech);
+}
+function bindGroupEditorEvents(groupKey, containerId){
+  $(containerId).addEventListener("click", event=>{
+    const action = event.target.dataset.action;
+    if(!action) return;
+    const group = event.target.dataset.group;
+    const index = Number(event.target.dataset.index);
+    const person = getPersonEditor(group, index);
+    if(!person) return;
+
+    if(action === "toggle-blocked-panel"){
+      person.blockedPanelOpen = !person.blockedPanelOpen;
+      person.blockedDraft = cloneBlockedRules(person.blockedRules);
+      person.blockedDraftDates = [];
+      person.blockedDateCalendarOpen = false;
+      renderGroupEditors();
+      return;
+    }
+    if(action === "toggle-blocked-date-calendar"){
+      person.blockedDateCalendarOpen = !person.blockedDateCalendarOpen;
+      renderGroupEditors();
+      return;
+    }
+    if(action === "select-blocked-date"){
+      const dateValue = event.target.dataset.date || "";
+      const selectedDates = new Set(person.blockedDraftDates || []);
+      if(selectedDates.has(dateValue)) selectedDates.delete(dateValue);
+      else selectedDates.add(dateValue);
+      person.blockedDraftDates = sortBlockedDraftDates([...selectedDates]);
+      renderGroupEditors();
+      return;
+    }
+    if(action === "add-blocked-rule"){
+      const dateValues = sortBlockedDraftDates(person.blockedDraftDates);
+      const modeValue = $(`${group}-${index}-blocked-mode`)?.value || "all";
+      if(!dateValues.length) return alert(TEXT.needDate);
+      if(!$("month").value) return alert(TEXT.needMonth);
+      if(dateValues.some(dateValue=>!isDateInCurrentMonth(dateValue))) return alert(TEXT.invalidBlockMonth);
+      dateValues.forEach(dateValue=>{
+        const existing = person.blockedDraft.find(rule=>rule.date === dateValue);
+        if(existing) existing.mode = modeValue;
+        else person.blockedDraft.push({ date:dateValue, mode:modeValue });
+      });
+      person.blockedDraft.sort((a, b)=>a.date.localeCompare(b.date));
+      person.blockedPanelOpen = true;
+      person.blockedDraftDates = [];
+      person.blockedDateCalendarOpen = false;
+      renderGroupEditors();
+      return;
+    }
+    if(action === "remove-blocked-rule"){
+      const ruleIndex = Number(event.target.dataset.ruleIndex);
+      person.blockedDraft.splice(ruleIndex, 1);
+      person.blockedPanelOpen = true;
+      renderGroupEditors();
+      return;
+    }
+    if(action === "confirm-blocked-rules"){
+      person.blockedRules = cloneBlockedRules(person.blockedDraft);
+      person.blockedPanelOpen = false;
+      person.blockedDraftDates = [];
+      person.blockedDateCalendarOpen = false;
+      syncAllGroupTextareas();
+      refreshFixedRuleOptions();
+      renderGroupEditors();
+      return;
+    }
+    if(action === "cancel-blocked-rules"){
+      person.blockedDraft = cloneBlockedRules(person.blockedRules);
+      person.blockedPanelOpen = false;
+      person.blockedDraftDates = [];
+      person.blockedDateCalendarOpen = false;
+      renderGroupEditors();
+      return;
+    }
+  });
+  $(containerId).addEventListener("change", event=>{
+    if(event.target.dataset.action === "toggle-backup"){
+      const group = event.target.dataset.group;
+      const index = Number(event.target.dataset.index);
+      const person = getPersonEditor(group, index);
+      if(!person) return;
+      person.isBackup = normalizeBackupFlag(person.name, Boolean(event.target.checked));
+      syncAllGroupTextareas();
+      renderGroupEditors();
+      return;
+    }
+    if(event.target.dataset.action !== "change-blocked-mode") return;
+    const group = event.target.dataset.group;
+    const index = Number(event.target.dataset.index);
+    const ruleIndex = Number(event.target.dataset.ruleIndex);
+    const person = getPersonEditor(group, index);
+    if(!person?.blockedDraft[ruleIndex]) return;
+    person.blockedDraft[ruleIndex].mode = event.target.value;
+  });
+}
+
+function getPageConfigSnapshot(){
+  return JSON.stringify({
+    month: $("month").value,
+    targetWork: $("targetWork").value,
+    targetRest: $("targetRest").value,
+    holidays: $("holidays").value,
+    lastEcomWeekend: $("lastEcomWeekend").value,
+    lastTechWeekend: $("lastTechWeekend").value,
+    prevSchedule: $("prevSchedule").value,
+    ecom: $("ecom").value,
+    tech: $("tech").value
+  });
+}
+function getSharedScheduleApiUrl(){
+  if(!/^https?:$/.test(window.location.protocol)) return "";
+  return new URL("/api/current-schedule", window.location.href).toString();
+}
+function getPlanLabel(planKey){
+  return PLAN_OPTIONS.find(option=>option.key === planKey)?.label || planKey;
+}
+function createEmptyPlanEntry(){
+  return { latest: null, savedAt: "" };
+}
+function createEmptySharedScheduleBundle(){
+  return {
+    version: 2,
+    savedAt: "",
+    activePlanKey: PLAN_OPTIONS[0].key,
+    commonForm: null,
+    plans: Object.fromEntries(PLAN_OPTIONS.map(option=>[option.key, createEmptyPlanEntry()]))
+  };
+}
+function captureSharedCommonFormState(){
+  syncAllGroupTextareas();
+  return {
+    month: $("month").value,
+    targetWork: $("targetWork").value,
+    targetRest: $("targetRest").value,
+    holidays: $("holidays").value,
+    prevSchedule: $("prevSchedule").value,
+    lastEcomWeekend: $("lastEcomWeekend").value,
+    lastTechWeekend: $("lastTechWeekend").value,
+    ecom: $("ecom").value,
+    tech: $("tech").value
+  };
+}
+function getPlanEntry(bundle, planKey){
+  if(!bundle.plans) bundle.plans = {};
+  if(!bundle.plans[planKey]) bundle.plans[planKey] = createEmptyPlanEntry();
+  return bundle.plans[planKey];
+}
+function captureCurrentPlanBundleState(markSaved = false){
+  sharedScheduleBundle.commonForm = captureSharedCommonFormState();
+  const entry = getPlanEntry(sharedScheduleBundle, currentPlanKey);
+  entry.latest = serializeLatestState();
+  if(markSaved) entry.savedAt = new Date().toISOString();
+  sharedScheduleBundle.activePlanKey = currentPlanKey;
+  if(markSaved) sharedScheduleBundle.savedAt = entry.savedAt;
+}
+function normalizeSharedScheduleBundle(snapshot){
+  const emptyBundle = createEmptySharedScheduleBundle();
+  if(!snapshot || typeof snapshot !== "object") return emptyBundle;
+  if(snapshot.version === 2 && snapshot.plans){
+    const bundle = {
+      version: 2,
+      savedAt: snapshot.savedAt || "",
+      activePlanKey: PLAN_OPTIONS.some(option=>option.key === snapshot.activePlanKey) ? snapshot.activePlanKey : PLAN_OPTIONS[0].key,
+      commonForm: snapshot.commonForm || snapshot.form || null,
+      plans: Object.fromEntries(PLAN_OPTIONS.map(option=>{
+        const rawEntry = snapshot.plans?.[option.key];
+        return [option.key, {
+          latest: rawEntry?.latest || null,
+          savedAt: rawEntry?.savedAt || ""
+        }];
+      }))
+    };
+    return bundle;
+  }
+  return {
+    ...emptyBundle,
+    version: 2,
+    savedAt: snapshot.savedAt || "",
+    commonForm: snapshot.form || null,
+    plans: {
+      ...emptyBundle.plans,
+      planA: {
+        latest: snapshot.latest || null,
+        savedAt: snapshot.savedAt || ""
+      }
+    }
+  };
+}
+function formatSharedSavedAt(value){
+  if(!value) return "\u672a\u4fdd\u5b58";
+  const date = new Date(value);
+  if(Number.isNaN(date.getTime())) return "\u672a\u77e5";
+  return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}:${pad(date.getSeconds())}`;
+}
+function getSharedStatusPillHtml(){
+  const planSavedAt = getPlanEntry(sharedScheduleBundle, currentPlanKey)?.savedAt || lastSharedScheduleSavedAt;
+  return `<span class="pill" data-role="active-plan">\u5f53\u524d\u7f16\u8f91\uff1a${esc(getPlanLabel(currentPlanKey))}</span><span class="pill" data-role="shared-saved-at">\u6700\u8fd1\u4fdd\u5b58\uff1a${esc(formatSharedSavedAt(planSavedAt))}</span>`;
+}
+function updateSharedStatusPill(){
+  const container = $("summaryPills");
+  if(!container) return;
+  container.querySelectorAll("[data-role='active-plan'], [data-role='compare-plan'], [data-role='shared-saved-at']").forEach(node=>node.remove());
+  container.insertAdjacentHTML("beforeend", getSharedStatusPillHtml());
+}
+function syncPlanControls(){
+  if($("planSelect")) $("planSelect").value = currentPlanKey;
+}
+function getComparePlanLatestState(){
+  return comparePlanKey ? getPlanEntry(sharedScheduleBundle, comparePlanKey)?.latest || null : null;
+}
+function switchCurrentPlan(nextPlanKey){
+  if(!PLAN_OPTIONS.some(option=>option.key === nextPlanKey) || nextPlanKey === currentPlanKey) return;
+  captureCurrentPlanBundleState(false);
+  currentPlanKey = nextPlanKey;
+  sharedScheduleBundle.activePlanKey = currentPlanKey;
+  if(comparePlanKey === currentPlanKey) comparePlanKey = "";
+  syncPlanControls();
+  restoreLatestState(getPlanEntry(sharedScheduleBundle, currentPlanKey)?.latest || null);
+  updateSharedStatusPill();
+}
+function copyCurrentPlanTo(targetPlanKey){
+  if(!PLAN_OPTIONS.some(option=>option.key === targetPlanKey) || targetPlanKey === currentPlanKey) return false;
+  captureCurrentPlanBundleState(false);
+  const source = getPlanEntry(sharedScheduleBundle, currentPlanKey);
+  sharedScheduleBundle.plans[targetPlanKey] = {
+    latest: source?.latest ? JSON.parse(JSON.stringify(source.latest)) : null,
+    savedAt: source?.savedAt || ""
+  };
+  return true;
+}
+function resolvePlanKeyFromInput(value){
+  const normalized = String(value || "").trim().toUpperCase();
+  if(!normalized) return "";
+  return PLAN_OPTIONS.find(option=>option.label.toUpperCase() === `方案${normalized}` || option.key.toUpperCase() === normalized || option.label.toUpperCase() === normalized)?.key || "";
+}
+function serializeRuntimeBlockedRules(person){
+  if(person?.blockedRules instanceof Map){
+    return [...person.blockedRules.entries()].map(([date, mode])=>({ date, mode }));
+  }
+  return cloneBlockedRules(person?.blockedRules);
+}
+function serializeRuntimePerson(person){
+  return {
+    name: person.name,
+    group: person.group,
+    targetWork: person.targetWork,
+    targetRest: person.targetRest,
+    blockedRules: serializeRuntimeBlockedRules(person),
+    wantRest: person.wantRest instanceof Set ? [...person.wantRest] : [],
+    isBackup: normalizeBackupFlag(person.name, person.isBackup),
+    days: { ...(person.days || {}) },
+    dayTags: { ...(person.dayTags || {}) },
+    notes: Array.isArray(person.notes) ? [...person.notes] : [],
+    carryWork: Number(person.carryWork || 0),
+    carryRest: Number(person.carryRest || 0),
+    prevMonthDayMap: { ...(person.prevMonthDayMap || {}) }
+  };
+}
+function serializeLatestState(){
+  if(!latest) return null;
+  return {
+    month: latest.month,
+    dates: [...latest.dates],
+    holidays: latest.holidays instanceof Set ? [...latest.holidays] : [],
+    regenerateMode: latest.regenerateMode || "unchanged",
+    ecom: latest.ecom.map(serializeRuntimePerson),
+    tech: latest.tech.map(serializeRuntimePerson)
+  };
+}
+function captureSharedScheduleState(){
+  captureCurrentPlanBundleState(true);
+  return sharedScheduleBundle;
+}
+function parseEditorGroupText(text){
+  return String(text || "")
+    .split(/\n+/)
+    .map(line=>line.trim())
+    .filter(Boolean)
+    .map(line=>{
+      const parts = line.split(",").map(item=>item.trim());
+      return {
+        name: parts[0] || "",
+        blockedRules: parseBlockedRuleString(parts[3]),
+        blockedDraft: [],
+        blockedPanelOpen: false,
+        blockedDraftDates: [],
+        blockedDateCalendarOpen: false,
+        isBackup: normalizeBackupFlag(parts[0] || "", parts[4] === "1")
+      };
+    })
+    .filter(person=>person.name);
+}
+function restoreGroupEditorsFromInputs(){
+  groupEditors.ecom = parseEditorGroupText($("ecom").value);
+  groupEditors.tech = parseEditorGroupText($("tech").value);
+  renderGroupEditors();
+  refreshFixedRuleOptions();
+}
+function restoreRuntimePerson(savedPerson, fallbackGroup){
+  const blockedRules = Array.isArray(savedPerson?.blockedRules) ? savedPerson.blockedRules.filter(rule=>rule?.date && rule?.mode) : [];
+  return {
+    group: savedPerson?.group || fallbackGroup,
+    name: savedPerson?.name || "",
+    targetWork: Number(savedPerson?.targetWork || 0),
+    targetRest: Number(savedPerson?.targetRest || 0),
+    blocked: new Set(blockedRules.filter(rule=>rule.mode === "all").map(rule=>rule.date)),
+    blockedRules: new Map(blockedRules.map(rule=>[rule.date, rule.mode])),
+    wantRest: new Set(Array.isArray(savedPerson?.wantRest) ? savedPerson.wantRest : []),
+    isBackup: normalizeBackupFlag(savedPerson?.name || "", savedPerson?.isBackup),
+    days: { ...(savedPerson?.days || {}) },
+    dayTags: { ...(savedPerson?.dayTags || {}) },
+    notes: Array.isArray(savedPerson?.notes) ? [...savedPerson.notes] : [],
+    carryWork: Number(savedPerson?.carryWork || 0),
+    carryRest: Number(savedPerson?.carryRest || 0),
+    prevMonthDayMap: { ...(savedPerson?.prevMonthDayMap || {}) }
+  };
+}
+function clearGeneratedScheduleView(){
+  latest = null;
+  lastGeneratedConfigSnapshot = "";
+  setImageExportState(null);
+  const planAState = getPlanEntry(sharedScheduleBundle, "planA")?.latest || null;
+  const planBState = getPlanEntry(sharedScheduleBundle, "planB")?.latest || null;
+  const planCState = getPlanEntry(sharedScheduleBundle, "planC")?.latest || null;
+  renderPlanPanel("monthly", "planA", planAState);
+  renderPlanPanel("monthlyPlanB", "planB", planBState, { variant: "planBPanel" });
+  renderPlanPanel("monthlyPlanC", "planC", planCState, { variant: "planCPanel" });
+  renderCoverageTable(planAState);
+  renderPersonStatsTable(planAState);
+  $("summaryPills").innerHTML = getSharedStatusPillHtml();
+  updateGenerateButton(false);
+}
+function restorePlanState(savedPlan){
+  restoreLatestState(savedPlan?.latest || null);
+}
+function restoreLatestState(savedLatest){
+  if(!savedLatest) return clearGeneratedScheduleView();
+  const holidays = new Set(Array.isArray(savedLatest.holidays) ? savedLatest.holidays : []);
+  const ecom = (savedLatest.ecom || []).map(person=>restoreRuntimePerson(person, "\u7535\u5546\u5ba2\u670d\u7ec4"));
+  const tech = (savedLatest.tech || []).map(person=>restoreRuntimePerson(person, "\u6280\u672f\u5ba2\u670d\u7ec4"));
+  const all = [...ecom, ...tech];
+  latest = {
+    month: savedLatest.month || $("month").value,
+    dates: Array.isArray(savedLatest.dates) ? [...savedLatest.dates] : [],
+    ecom,
+    tech,
+    all,
+    holidays,
+    regenerateMode: savedLatest.regenerateMode || "unchanged"
+  };
+  latest.coverageVacancies = rebuildCoverageVacanciesForManualEdit(latest);
+  latest.level1Violations = validateLevel1Rules(latest.all, latest.tech, latest.dates, latest.holidays, latest.coverageVacancies);
+  latest.level2Violations = validateLevel2Rules(latest.ecom, latest.tech, latest.all, latest.dates, latest.holidays);
+  latest.publishable = latest.level1Violations.length === 0;
+  latest.requiresAdminConfirmation = latest.publishable && latest.level2Violations.length > 0;
+  lastGeneratedConfigSnapshot = getPageConfigSnapshot();
+  updateGenerateButton(true);
+  render(latest);
+}
+function applySharedScheduleState(snapshot){
+  const bundle = normalizeSharedScheduleBundle(snapshot);
+  sharedScheduleBundle = bundle;
+  currentPlanKey = bundle.activePlanKey || PLAN_OPTIONS[0].key;
+  comparePlanKey = "";
+  const form = bundle.commonForm || {};
+  $("month").value = form.month || "";
+  $("targetWork").value = form.targetWork || "";
+  $("targetRest").value = form.targetRest || "";
+  $("holidays").value = form.holidays || "";
+  $("prevSchedule").value = form.prevSchedule || "";
+  $("lastEcomWeekend").value = form.lastEcomWeekend || "";
+  $("lastTechWeekend").value = form.lastTechWeekend || "";
+  $("ecom").value = form.ecom || "";
+  $("tech").value = form.tech || "";
+  syncMultiSummary("lastEcomWeekend", TEXT.emptyLastEcom);
+  syncMultiSummary("lastTechWeekend", TEXT.emptyLastTech);
+  restoreGroupEditorsFromInputs();
+  refreshFixedRuleOptions();
+  syncPlanControls();
+  restorePlanState(getPlanEntry(sharedScheduleBundle, currentPlanKey));
+}
+async function loadSharedScheduleState(options = {}){
+  const { silent = false } = options;
+  const apiUrl = getSharedScheduleApiUrl();
+  if(!apiUrl) return false;
+  try{
+    const response = await fetch(apiUrl, { method:"GET", cache:"no-store" });
+    if(response.status === 404){
+      lastSharedScheduleSavedAt = "";
+      updateSharedStatusPill();
+      return false;
+    }
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    if(!payload?.state){
+      lastSharedScheduleSavedAt = "";
+      updateSharedStatusPill();
+      return false;
+    }
+    lastSharedScheduleSavedAt = payload.updatedAt ? new Date(payload.updatedAt).toISOString() : (payload.state.savedAt || "");
+    applySharedScheduleState(payload.state);
+    updateSharedStatusPill();
+    if(!silent) alert(`\u5df2\u8bfb\u53d6${getPlanLabel(currentPlanKey)}\u7684\u6392\u73ed`);
+    return true;
+  }catch(error){
+    console.error(error);
+    if(!silent) alert("\u8bfb\u53d6\u5f53\u524d\u6392\u73ed\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5");
+    return false;
+  }
+}
+async function saveSharedScheduleState(){
+  const apiUrl = getSharedScheduleApiUrl();
+  if(!apiUrl) return alert("\u8bf7\u4ece\u7f51\u7ad9\u94fe\u63a5\u6253\u5f00\u5de5\u5177\u540e\u518d\u4f7f\u7528\u5171\u4eab\u4fdd\u5b58");
+  try{
+    const state = captureSharedScheduleState();
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state })
+    });
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    lastSharedScheduleSavedAt = payload?.updatedAt ? new Date(payload.updatedAt).toISOString() : new Date().toISOString();
+    updateSharedStatusPill();
+    alert(`${getPlanLabel(currentPlanKey)}\u5df2\u4fdd\u5b58\uff0c\u5176\u4ed6\u6d4f\u89c8\u5668\u6253\u5f00\u540e\u53ef\u7ee7\u7eed\u4fee\u6539`);
+  }catch(error){
+    console.error(error);
+    alert("\u4fdd\u5b58\u5f53\u524d\u6392\u73ed\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5");
+  }
+}
+async function clearSharedScheduleState(){
+  const apiUrl = getSharedScheduleApiUrl();
+  if(!apiUrl) return alert("\u8bf7\u4ece\u7f51\u7ad9\u94fe\u63a5\u6253\u5f00\u5de5\u5177\u540e\u518d\u4f7f\u7528\u5171\u4eab\u6e05\u7a7a");
+  if(!confirm(`\u786e\u5b9a\u8981\u6e05\u7a7a${getPlanLabel(currentPlanKey)}\u5df2\u4fdd\u5b58\u7684\u6392\u73ed\u5417\uff1f`)) return;
+  try{
+    captureCurrentPlanBundleState(false);
+    sharedScheduleBundle.plans[currentPlanKey] = createEmptyPlanEntry();
+    sharedScheduleBundle.activePlanKey = currentPlanKey;
+    const response = await fetch(apiUrl, {
+      method: "PUT",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ state: sharedScheduleBundle })
+    });
+    if(!response.ok) throw new Error(`HTTP ${response.status}`);
+    const payload = await response.json();
+    lastSharedScheduleSavedAt = payload?.updatedAt ? new Date(payload.updatedAt).toISOString() : "";
+    clearGeneratedScheduleView();
+    updateSharedStatusPill();
+    alert(`${getPlanLabel(currentPlanKey)}\u5df2\u6e05\u7a7a`);
+  }catch(error){
+    console.error(error);
+    alert("\u6e05\u7a7a\u5f53\u524d\u6392\u73ed\u5931\u8d25\uff0c\u8bf7\u7a0d\u540e\u91cd\u8bd5");
+  }
+}
+function updateGenerateButton(hasGenerated){
+  $("generateBtn").textContent = hasGenerated ? TEXT.regenerateLabel : TEXT.generateLabel;
+}
+function handleGenerateClick(){
+  const hasGenerated = Boolean(latest);
+  const currentSnapshot = getPageConfigSnapshot();
+  const regenerateMode = !hasGenerated ? "initial" : (currentSnapshot === lastGeneratedConfigSnapshot ? "unchanged" : "changed");
+  generate(regenerateMode);
+}
+function isWorkShift(v){ return SHIFT_WORK.has(String(v || "").trim()); }
+function isAttendanceDay(p, date){ return isWorkShift(p.days[date]) || isLeaveMarked(p, date); }
+function attendanceCount(p, dates){ return dates.filter(d=>isWorkShift(p.days[d]) || isLeaveMarked(p, d)).length; }
+function workCount(p, dates){ return attendanceCount(p, dates); }
+function restCount(p, dates){ return dates.filter(d=>p.days[d] === SHIFT_REST && !isLeaveMarked(p, d)).length; }
+function countShift(p, dates, shift){ return dates.filter(d=>p.days[d] === shift).length; }
+function weekendWorkCount(p, dates){ return dates.filter(d=>isWeekend(d) && isWorkShift(p.days[d])).length; }
+function displayShift(p, date){
+  const raw = p.days[date] || "";
+  if(isCustomRestMarked(p, date) && raw === SHIFT_REST) return SHIFT_REST;
+  if(!isLeaveMarked(p, date)) return raw;
+  if(raw === SHIFT_REST || raw === "") return "(假)";
+  return `${raw}(假)`;
+}
+function maxWorkStreak(p, dates){
+  let max = p.carryWork || 0;
+  let cur = p.carryWork || 0;
+  for(const d of dates){
+    if(isAttendanceDay(p, d)){ cur += 1; max = Math.max(max, cur); }
+    else if(p.days[d] === SHIFT_REST || p.days[d] === SHIFT_BLANK) cur = 0;
+  }
+  return max;
+}
+function maxRestStreak(p, dates){
+  let max = p.carryRest || 0;
+  let cur = p.carryRest || 0;
+  for(const d of dates){
+    if(p.days[d] === SHIFT_REST){ cur += 1; max = Math.max(max, cur); }
+    else if(isAttendanceDay(p, d) || p.days[d] === SHIFT_BLANK) cur = 0;
+  }
+  return max;
+}
+function wouldBreakWorkStreak(p, date, shift, dates){
+  const old = p.days[date];
+  p.days[date] = shift;
+  const bad = maxWorkStreak(p, dates) > 6;
+  if(old === undefined) delete p.days[date]; else p.days[date] = old;
+  return bad;
+}
+function wouldBreakRestStreak(p, date, dates){
+  const old = p.days[date];
+  p.days[date] = SHIFT_REST;
+  const bad = maxRestStreak(p, dates) > 3;
+  if(old === undefined) delete p.days[date]; else p.days[date] = old;
+  return bad;
+}
+function canConvertWorkToRest(p, date, dates){
+  if(!isWorkShift(p.days[date])) return false;
+  const old = p.days[date];
+  p.days[date] = SHIFT_REST;
+  const bad = maxRestStreak(p, dates) > 3;
+  p.days[date] = old;
+  return !bad;
+}
+function canRewriteAssignedShift(p, date, shift, dates){
+  const old = p.days[date];
+  if(old === shift) return true;
+  if(!old) return false;
+  if(isShiftBlocked(p, date, shift)) return false;
+  if(isBackupWeekendRestPerson(p) && isWeekend(date) && isWorkShift(shift)) return false;
+  if(p.wantRest.has(date) && isWorkShift(shift)) return false;
+  if(["Amber","John","Arya"].includes(p.name) && isWeekday(date) && shift !== SHIFT_NORMAL) return false;
+  p.days[date] = shift;
+  const bad =
+    maxWorkStreak(p, dates) > 6 ||
+    maxRestStreak(p, dates) > 3;
+  p.days[date] = old;
+  return !bad;
+}
+function isBackupWeekendRestPerson(p){
+  return Boolean(p?.isBackup);
+}
+function canAssign(p, date, shift, dates){
+  if(p.days[date]) return false;
+  if(isShiftBlocked(p, date, shift)) return false;
+  if(isBackupWeekendRestPerson(p) && isWeekend(date)) return false;
+  if(p.wantRest.has(date)) return false;
+  if(attendanceCount(p, dates) >= p.targetWork) return false;
+  if(wouldBreakWorkStreak(p, date, shift, dates)) return false;
+  return true;
+}
+function canAssignForLevel1Target(p, date, shift, dates){
+  if(p.days[date]) return false;
+  if(isShiftBlocked(p, date, shift)) return false;
+  if(isBackupWeekendRestPerson(p) && isWeekend(date)) return false;
+  if(p.wantRest.has(date)) return false;
+  if(attendanceCount(p, dates) >= p.targetWork) return false;
+  if(wouldBreakWorkStreak(p, date, shift, dates)) return false;
+  return true;
+}
+function canConvertRestToWork(p, date, shift, dates){
+  if(p.days[date] !== SHIFT_REST) return false;
+  if(isShiftBlocked(p, date, shift)) return false;
+  if(isBackupWeekendRestPerson(p) && isWeekend(date)) return false;
+  if(p.wantRest.has(date)) return false;
+  if(attendanceCount(p, dates) >= p.targetWork) return false;
+  if(wouldBreakWorkStreak(p, date, shift, dates)) return false;
+  const old = p.days[date];
+  p.days[date] = shift;
+  const badRest = maxRestStreak(p, dates) > 3;
+  p.days[date] = old;
+  if(badRest) return false;
+  return true;
+}
+function assign(p, date, shift, note){
+  p.days[date] = shift;
+  if(note) p.notes.push(`${date} ${note}`);
+}
+function canReassignTechShiftOnDate(person, date, nextShift, dates){
+  const currentShift = person.days[date];
+  if(!isWorkShift(currentShift) || currentShift === nextShift) return false;
+  if(isShiftBlocked(person, date, nextShift)) return false;
+  if(["John","Arya"].includes(person.name) && isWeekday(date) && nextShift !== SHIFT_NORMAL) return false;
+  return true;
+}
+function enforceTechCoverage(techDuty, dates, holidays){
+  const vacancies = {};
+  const requiredShifts = [SHIFT_NORMAL, SHIFT_MID1, SHIFT_MID2];
+  for(const date of dates){
+    if(holidays.has(date)) continue;
+    for(const targetShift of requiredShifts){
+      let counts = {
+        [SHIFT_NORMAL]: techDuty.filter(p=>p.days[date] === SHIFT_NORMAL).length,
+        [SHIFT_MID1]: techDuty.filter(p=>p.days[date] === SHIFT_MID1).length,
+        [SHIFT_MID2]: techDuty.filter(p=>p.days[date] === SHIFT_MID2).length
+      };
+      if(counts[targetShift] >= 1) continue;
+      const candidate = techDuty
+        .filter(p=>canReassignTechShiftOnDate(p, date, targetShift, dates))
+        .sort((a, b)=>{
+          const aShift = a.days[date];
+          const bShift = b.days[date];
+          const aDuplicate = counts[aShift] > 1 ? 0 : 1;
+          const bDuplicate = counts[bShift] > 1 ? 0 : 1;
+          return aDuplicate - bDuplicate || a.name.localeCompare(b.name, "zh-Hans-CN");
+        })[0];
+      if(candidate){
+        const fromShift = candidate.days[date];
+        candidate.days[date] = targetShift;
+        candidate.notes.push(`${date} \u4e3a\u6ee1\u8db3\u6280\u672f\u7ec4\u6bcf\u65e5\u8986\u76d6\uff0c\u7531${fromShift}\u8c03\u6574\u4e3a${targetShift}`);
+      }
+    }
+    const finalCounts = {
+      [SHIFT_NORMAL]: techDuty.filter(p=>p.days[date] === SHIFT_NORMAL).length,
+      [SHIFT_MID1]: techDuty.filter(p=>p.days[date] === SHIFT_MID1).length,
+      [SHIFT_MID2]: techDuty.filter(p=>p.days[date] === SHIFT_MID2).length
+    };
+    if(isWeekend(date)){
+      for(const shift of requiredShifts){
+        while(finalCounts[shift] > 1){
+          const extra = techDuty
+            .filter(p=>p.days[date] === shift)
+            .filter(p=>canConvertWorkToRest(p, date, dates))
+            .sort((a, b)=>a.name.localeCompare(b.name, "zh-Hans-CN"))[0];
+          if(!extra) break;
+          extra.days[date] = SHIFT_REST;
+          extra.notes.push(`${date} \u4e3a\u6ee1\u8db3\u5468\u672b\u503c\u73ed\u4ec5\u4fdd\u7559\u6b63\u73ed/\u4e2d1/\u4e2d2\u54041\u4eba\uff0c\u5df2\u8c03\u6574\u4e3a\u4f11\u606f`);
+          finalCounts[shift] -= 1;
+        }
+      }
+    }
+    for(const shift of requiredShifts){
+      if(finalCounts[shift] < 1) addCoverageVacancy(vacancies, date, shift);
+    }
+  }
+  return vacancies;
+}
+function addCoverageVacancy(vacancies, date, shift){
+  if(!vacancies[date]) vacancies[date] = [];
+  if(!vacancies[date].includes(shift)) vacancies[date].push(shift);
+}
+function getCoverageVacancyText(vacancies, date){
+  const items = vacancies?.[date] || [];
+  return items.length ? items.map(shift=>`\u6280\u672f${shift}${TEXT.vacancyLabel}`).join("\uff1b") : "";
+}
+function rebuildCoverageVacanciesForManualEdit(r){
+  const vacancies = {};
+  const techDuty = r.tech.filter(isCoverageEligible);
+  for(const date of r.dates){
+    if(r.holidays.has(date)) continue;
+    if(!techDuty.some(p=>p.days[date] === SHIFT_NORMAL)) addCoverageVacancy(vacancies, date, SHIFT_NORMAL);
+    if(!techDuty.some(p=>p.days[date] === SHIFT_MID1)) addCoverageVacancy(vacancies, date, SHIFT_MID1);
+    if(!techDuty.some(p=>p.days[date] === SHIFT_MID2)) addCoverageVacancy(vacancies, date, SHIFT_MID2);
+  }
+  return vacancies;
+}
+function clearHolidayAssignments(all, dates, holidays){
+  for(const date of dates){
+    if(!holidays.has(date)) continue;
+    all.forEach(person=>{
+      person.days[date] = "";
+      if(person.dayTags) delete person.dayTags[date];
+    });
+  }
+}
+function applyCustomRestDays(all, dates, holidays){
+  for(const person of all){
+    for(const date of dates){
+      if(holidays.has(date)) continue;
+      if(!isCustomRestMarked(person, date)) continue;
+      person.days[date] = SHIFT_REST;
+      if(person.dayTags) delete person.dayTags[date];
+    }
+  }
+}
+function getTagEditKey(groupKey, personIndex, date){
+  return `${groupKey}|${personIndex}|${date}`;
+}
+function focusEditingTagSelect(){
+  if(!editingTagKey) return;
+  const [groupKey, index, date] = editingTagKey.split("|");
+  const selector = `select[data-action="manual-tag"][data-group="${groupKey}"][data-index="${index}"][data-date="${date}"]`;
+  requestAnimationFrame(()=>{
+    const select = document.querySelector(selector);
+    if(select instanceof HTMLSelectElement) select.focus();
+  });
+}
+function getManualShiftValueForDate(person, date){
+  if(latest?.holidays?.has(date)){
+    return isLeaveMarked(person, date) && !isWorkShift(person.days[date]) ? SHIFT_LEAVE_MANUAL : (person.days[date] || SHIFT_REST);
+  }
+  return isLeaveMarked(person, date) && !isWorkShift(person.days[date]) ? SHIFT_LEAVE_MANUAL : (person.days[date] ?? "");
+}
+function getManualTagValueForDate(person, date){
+  return person.dayTags?.[date] || "";
+}
+function canUseManualTag(date, shiftValue){
+  if(!shiftValue || shiftValue === SHIFT_LEAVE_MANUAL) return false;
+  if(latest?.holidays?.has(date) && shiftValue === SHIFT_REST) return false;
+  return true;
+}
+function applyManualShiftValue(person, date, nextValue, nextTagValue="", notePrefix="手动修改"){
+  if(nextValue === SHIFT_LEAVE_MANUAL){
+    person.days[date] = "";
+    person.dayTags = person.dayTags || {};
+    delete person.dayTags[date];
+    person.blockedRules = person.blockedRules || new Map();
+    person.blockedRules.set(date, "all");
+  }else{
+    person.days[date] = latest.holidays.has(date) && nextValue === SHIFT_REST ? "" : nextValue;
+    if(person.blockedRules instanceof Map) person.blockedRules.delete(date);
+    person.dayTags = person.dayTags || {};
+    if(canUseManualTag(date, nextValue) && nextTagValue) person.dayTags[date] = nextTagValue;
+    else delete person.dayTags[date];
+  }
+  addUniqueNote(person, `${date} ${notePrefix}为${nextValue}${nextTagValue ? getDayTagLabel(nextTagValue) : ""}`);
+}
+function finalizeManualScheduleEdit(){
+  latest.coverageVacancies = rebuildCoverageVacanciesForManualEdit(latest);
+  latest.level1Violations = validateLevel1Rules(latest.all, latest.tech, latest.dates, latest.holidays, latest.coverageVacancies);
+  latest.level2Violations = validateLevel2Rules(latest.ecom, latest.tech, latest.all, latest.dates, latest.holidays);
+  latest.publishable = latest.level1Violations.length === 0;
+  latest.requiresAdminConfirmation = latest.publishable && latest.level2Violations.length > 0;
+  render(latest);
+}
+function handleManualScheduleChange(event){
+  const target = event.target;
+  if(!(target instanceof HTMLSelectElement) || !latest) return;
+  const group = target.dataset.group;
+  const index = Number(target.dataset.index);
+  const date = target.dataset.date;
+  const person = latest[group]?.[index];
+  if(!person || !date) return;
+  const action = target.dataset.action;
+  if(action === "manual-shift"){
+    applyManualShiftValue(person, date, target.value, getManualTagValueForDate(person, date), "手动修改");
+  }else if(action === "manual-tag"){
+    person.dayTags = person.dayTags || {};
+    if(target.value){
+      person.dayTags[date] = target.value;
+      addUniqueNote(person, `${date} \u624b\u52a8\u6807\u8bb0${getDayTagLabel(target.value)}`);
+    }else{
+      delete person.dayTags[date];
+    }
+    editingTagKey = "";
+  }else{
+    return;
+  }
+  finalizeManualScheduleEdit();
+}
+function getMonthlyShiftSelect(target){
+  if(target instanceof HTMLSelectElement && target.dataset.action === "manual-shift") return target;
+  if(target instanceof HTMLElement) return target.closest("select[data-action='manual-shift']");
+  return null;
+}
+function getManualCellKey(group, index, date){
+  return `${group}|${index}|${date}`;
+}
+function parseManualCellKey(key){
+  if(!key) return null;
+  const [group, indexText, date] = String(key).split("|");
+  if(!group || !date) return null;
+  return { group, index: Number(indexText || 0), date };
+}
+function listMonthlyManualRows(){
+  return [...document.querySelectorAll("#monthly .draggablePersonRow")].map((row, order)=>({
+    group: row.dataset.group || "",
+    index: Number(row.dataset.index || 0),
+    order
+  }));
+}
+function getManualCellRectKeys(startKey, endKey){
+  if(!latest) return [];
+  const start = parseManualCellKey(startKey);
+  const end = parseManualCellKey(endKey);
+  if(!start || !end) return [];
+  const rowMap = new Map(listMonthlyManualRows().map(item=>[`${item.group}|${item.index}`, item.order]));
+  const startRow = rowMap.get(`${start.group}|${start.index}`);
+  const endRow = rowMap.get(`${end.group}|${end.index}`);
+  const startDateIndex = latest.dates.indexOf(start.date);
+  const endDateIndex = latest.dates.indexOf(end.date);
+  if(startRow == null || endRow == null || startDateIndex < 0 || endDateIndex < 0) return [];
+  const rowMin = Math.min(startRow, endRow);
+  const rowMax = Math.max(startRow, endRow);
+  const dateMin = Math.min(startDateIndex, endDateIndex);
+  const dateMax = Math.max(startDateIndex, endDateIndex);
+  const rows = listMonthlyManualRows().filter(item=>item.order >= rowMin && item.order <= rowMax);
+  const keys = [];
+  rows.forEach(item=>{
+    for(let dateIndex = dateMin; dateIndex <= dateMax; dateIndex += 1){
+      const date = latest.dates[dateIndex];
+      if(!date || !isDateInCurrentMonth(date)) continue;
+      keys.push(getManualCellKey(item.group, item.index, date));
+    }
+  });
+  return keys;
+}
+function setSelectedManualCellKeys(keys, anchorKey){
+  selectedManualCellKeys = new Set((keys || []).filter(Boolean));
+  selectedManualCellKey = anchorKey || [...selectedManualCellKeys][0] || "";
+  if(anchorKey) manualSelectionAnchorKey = anchorKey;
+  else if(!selectedManualCellKeys.size) manualSelectionAnchorKey = "";
+  updateSelectedManualCellVisual();
+}
+function updateSelectedManualCellVisual(){
+  document.querySelectorAll("#monthly [data-action='manual-cell']").forEach(cell=>{
+    const element = cell;
+    if(!(element instanceof HTMLElement)) return;
+    const key = getManualCellKey(element.dataset.group || "", Number(element.dataset.index || 0), element.dataset.date || "");
+    element.classList.toggle("manualCellSelected", selectedManualCellKeys.has(key) || (!!selectedManualCellKey && key === selectedManualCellKey));
+  });
+}
+function setSelectedManualCell(group, index, date, options = {}){
+  const key = group && date ? getManualCellKey(group, index, date) : "";
+  if(!key){
+    setSelectedManualCellKeys([], "");
+    return;
+  }
+  if(options.extend && manualSelectionAnchorKey){
+    setSelectedManualCellKeys(getManualCellRectKeys(manualSelectionAnchorKey, key), manualSelectionAnchorKey);
+    selectedManualCellKey = key;
+    updateSelectedManualCellVisual();
+    return;
+  }
+  manualSelectionAnchorKey = key;
+  setSelectedManualCellKeys([key], key);
+}
+function resolveManualCellElement(target){
+  if(target instanceof HTMLElement) return target.closest("[data-action='manual-cell']");
+  if(target instanceof Node && target.parentElement) return target.parentElement.closest("[data-action='manual-cell']");
+  return null;
+}
+function getSelectedManualCellDescriptor(){
+  if(!selectedManualCellKey || !latest) return null;
+  const [group, indexText, date] = selectedManualCellKey.split("|");
+  const index = Number(indexText || 0);
+  const person = latest[group]?.[index];
+  if(!person || !date) return null;
+  return { group, index, date, person };
+}
+function getSelectedManualCellDescriptors(){
+  if(!latest) return [];
+  const rows = listMonthlyManualRows();
+  const rowMap = new Map(rows.map(item=>[`${item.group}|${item.index}`, item.order]));
+  return [...selectedManualCellKeys]
+    .map(key=>{
+      const parsed = parseManualCellKey(key);
+      if(!parsed) return null;
+      const person = latest[parsed.group]?.[parsed.index];
+      const dateIndex = latest.dates.indexOf(parsed.date);
+      if(!person || dateIndex < 0) return null;
+      return { ...parsed, person, rowOrder: rowMap.get(`${parsed.group}|${parsed.index}`) ?? -1, dateIndex };
+    })
+    .filter(Boolean)
+    .sort((a, b)=>(a.rowOrder - b.rowOrder) || (a.dateIndex - b.dateIndex));
+}
+function getSelectedManualCellBounds(){
+  const descriptors = getSelectedManualCellDescriptors();
+  if(!descriptors.length) return null;
+  const rowOrders = descriptors.map(item=>item.rowOrder);
+  const dateIndexes = descriptors.map(item=>item.dateIndex);
+  return {
+    descriptors,
+    rowMin: Math.min(...rowOrders),
+    rowMax: Math.max(...rowOrders),
+    dateMin: Math.min(...dateIndexes),
+    dateMax: Math.max(...dateIndexes)
+  };
+}
+function resolveManualScheduleTarget(target){
+  const select = getMonthlyShiftSelect(target);
+  if(select instanceof HTMLSelectElement) return select;
+  const cell = resolveManualCellElement(target);
+  if(cell instanceof HTMLElement) return cell;
+  if(target instanceof HTMLElement) return target.closest("[data-action='edit-tag'], [data-action='manual-tag']");
+  if(target instanceof Node && target.parentElement) return target.parentElement.closest("[data-action='edit-tag'], [data-action='manual-tag']");
+  return null;
+}
+function normalizeManualShiftText(value){
+  const raw = String(value || "").replace(/\s+/g, "").trim();
+  const asciiRaw = raw.replace(/[（）]/g, match=>match === "（" ? "(" : ")");
+  const normalized = asciiRaw.replace(/\(?chat\)?/ig, "").trim();
+  if(!normalized) return "";
+  if(normalized.includes("中1")) return SHIFT_MID1;
+  if(normalized.includes("中2")) return SHIFT_MID2;
+  if(normalized === "正") return SHIFT_NORMAL;
+  if(normalized.includes("正班")) return SHIFT_NORMAL;
+  if(normalized === "休") return SHIFT_REST;
+  if(normalized.includes("休息") || normalized === "/" || normalized === "／" || normalized === "\\" || normalized === "、" || normalized === "休") return SHIFT_REST;
+  if(normalized === "请假" || normalized === "假") return SHIFT_LEAVE_MANUAL;
+  if(normalized.includes("请假") || normalized.includes("(假)") || normalized === "假") return SHIFT_LEAVE_MANUAL;
+  return "";
+}
+function parseManualTagValue(value){
+  const raw = String(value || "").replace(/\s+/g, "").trim();
+  if(!raw) return "";
+  const asciiRaw = raw.replace(/[（）]/g, match=>match === "（" ? "(" : ")");
+  if(/\(?chat\)?/i.test(asciiRaw)) return MANUAL_TAG_CHAT;
+  if(asciiRaw.includes("(*)")) return MANUAL_TAG_STAR;
+  return "";
+}
+function hasManualChatTag(value){
+  const raw = String(value || "").replace(/\s+/g, "").trim();
+  if(!raw) return false;
+  const asciiRaw = raw.replace(/[（）]/g, match=>match === "（" ? "(" : ")");
+  return /\(?chat\)?/i.test(asciiRaw);
+}
+function parseManualCellClipboardText(text, fallbackPerson, fallbackDate){
+  const raw = String(text || "").trim();
+  if(!raw) return null;
+  const shiftValue = normalizeManualShiftText(raw);
+  const tagValue = parseManualTagValue(raw);
+  if(!shiftValue && !tagValue) return null;
+  return {
+    shiftValue: shiftValue || getManualShiftValueForDate(fallbackPerson, fallbackDate),
+    tagValue
+  };
+}
+function buildManualCellClipboardText(person, date){
+  const shiftValue = getManualShiftValueForDate(person, date);
+  const tagValue = getManualTagValueForDate(person, date);
+  return `${shiftValue || ""}${tagValue ? getDayTagLabel(tagValue) : ""}`.trim();
+}
+function handleManualCellCopy(event){
+  if(!latest) return false;
+  const selectionBounds = getSelectedManualCellBounds();
+  if(selectionBounds?.descriptors?.length > 1){
+    const matrix = [];
+    for(let rowOrder = selectionBounds.rowMin; rowOrder <= selectionBounds.rowMax; rowOrder += 1){
+      const rowValues = [];
+      for(let dateIndex = selectionBounds.dateMin; dateIndex <= selectionBounds.dateMax; dateIndex += 1){
+        const cell = selectionBounds.descriptors.find(item=>item.rowOrder === rowOrder && item.dateIndex === dateIndex);
+        rowValues.push(cell ? buildManualCellClipboardText(cell.person, cell.date) : "");
+      }
+      matrix.push(rowValues.join("\t"));
+    }
+    event.preventDefault();
+    event.clipboardData?.setData("text/plain", matrix.join("\n"));
+    return true;
+  }
+  const target = resolveManualScheduleTarget(event.target) || resolveManualScheduleTarget(document.activeElement);
+  const descriptor = target instanceof HTMLElement
+    ? {
+        group: target.dataset.group || "",
+        index: Number(target.dataset.index || 0),
+        date: target.dataset.date || "",
+        person: latest[target.dataset.group || ""]?.[Number(target.dataset.index || 0)]
+      }
+    : getSelectedManualCellDescriptor();
+  if(!descriptor?.person || !descriptor.date || !isDateInCurrentMonth(descriptor.date)) return false;
+  const text = buildManualCellClipboardText(descriptor.person, descriptor.date);
+  if(!text) return false;
+  event.preventDefault();
+  event.clipboardData?.setData("text/plain", text);
+  return true;
+}
+function handleManualSchedulePaste(event){
+  if(!latest) return false;
+  const target = resolveManualScheduleTarget(event.target);
+  const selectedDescriptors = getSelectedManualCellDescriptors();
+  const descriptor = target instanceof HTMLElement
+    ? {
+        group: target.dataset.group || "",
+        index: Number(target.dataset.index || 0),
+        date: target.dataset.date || "",
+        person: latest[target.dataset.group || ""]?.[Number(target.dataset.index || 0)]
+      }
+    : getSelectedManualCellDescriptor();
+  if(!descriptor?.person || !descriptor.date || !isDateInCurrentMonth(descriptor.date)) return false;
+  const clipboardHtml = event.clipboardData?.getData("text/html");
+  const clipboardText = event.clipboardData?.getData("text/plain");
+  const htmlMatrix = extractClipboardHtmlMatrix(clipboardHtml);
+  const matrix = htmlMatrix.length ? htmlMatrix.map(row=>row.map(cell=>({ text: cell.text }))) : extractClipboardPlainMatrix(clipboardText);
+  if(!matrix.length) return false;
+  event.preventDefault();
+  if(selectedDescriptors.length > 1 && matrix.length === 1 && matrix[0].length === 1){
+    const parsed = parseManualCellClipboardText(matrix[0][0]?.text || "", descriptor.person, descriptor.date);
+    if(!parsed) return false;
+    let changedSelection = false;
+    selectedDescriptors.forEach(item=>{
+      applyManualShiftValue(item.person, item.date, parsed.shiftValue || getManualShiftValueForDate(item.person, item.date), parsed.tagValue, "批量粘贴修改");
+      changedSelection = true;
+    });
+    if(!changedSelection) return false;
+    finalizeManualScheduleEdit();
+    return true;
+  }
+  const selectedBounds = getSelectedManualCellBounds();
+  if(selectedBounds?.descriptors?.length > 1){
+    const selectedHeight = selectedBounds.rowMax - selectedBounds.rowMin + 1;
+    const selectedWidth = selectedBounds.dateMax - selectedBounds.dateMin + 1;
+    if(matrix.length === selectedHeight && matrix.every(row=>row.length === selectedWidth)){
+      let changedSelection = false;
+      for(let rowOffset = 0; rowOffset < selectedHeight; rowOffset += 1){
+        for(let colOffset = 0; colOffset < selectedWidth; colOffset += 1){
+          const targetDescriptor = selectedBounds.descriptors.find(item=>item.rowOrder === selectedBounds.rowMin + rowOffset && item.dateIndex === selectedBounds.dateMin + colOffset);
+          if(!targetDescriptor) continue;
+          const parsed = parseManualCellClipboardText(matrix[rowOffset]?.[colOffset]?.text || "", targetDescriptor.person, targetDescriptor.date);
+          if(!parsed) continue;
+          applyManualShiftValue(targetDescriptor.person, targetDescriptor.date, parsed.shiftValue, parsed.tagValue, "批量粘贴修改");
+          changedSelection = true;
+        }
+      }
+      if(changedSelection){
+        finalizeManualScheduleEdit();
+        return true;
+      }
+    }
+  }
+  const startDateIndex = latest.dates.indexOf(descriptor.date);
+  const rowStarts = [...document.querySelectorAll("#monthly .draggablePersonRow")];
+  const startRowIndex = rowStarts.findIndex(row=>row.dataset.group === descriptor.group && Number(row.dataset.index) === descriptor.index);
+  if(startDateIndex < 0 || startRowIndex < 0) return false;
+  let changed = false;
+  matrix.forEach((cols, rowOffset)=>{
+    const row = rowStarts[startRowIndex + rowOffset];
+    if(!(row instanceof HTMLElement)) return;
+    const rowGroup = row.dataset.group || "";
+    const rowIndex = Number(row.dataset.index || 0);
+    const rowPerson = latest[rowGroup]?.[rowIndex];
+    if(!rowPerson) return;
+    cols.forEach((cell, colOffset)=>{
+      const targetDate = latest.dates[startDateIndex + colOffset];
+      if(!targetDate) return;
+      const parsed = parseManualCellClipboardText(cell?.text || "", rowPerson, targetDate);
+      if(!parsed) return;
+      applyManualShiftValue(rowPerson, targetDate, parsed.shiftValue, parsed.tagValue, "粘贴修改");
+      changed = true;
+    });
+  });
+  if(!changed) return false;
+  finalizeManualScheduleEdit();
+  return true;
+}
+function getPersonByMonthlyDataset(group, index){
+  return latest?.[group]?.[Number(index)] || null;
+}
+function resolvePrevMonthCellTarget(target){
+  if(target instanceof HTMLElement) return target.closest("[data-action='prev-shift']");
+  if(target instanceof Node && target.parentElement) return target.parentElement.closest("[data-action='prev-shift']");
+  return null;
+}
+function handlePrevMonthCellBlur(event){
+  const target = resolvePrevMonthCellTarget(event.target);
+  if(!(target instanceof HTMLElement) || !latest) return;
+  const person = getPersonByMonthlyDataset(target.dataset.group, target.dataset.index);
+  const date = target.dataset.date;
+  if(!person || !date) return;
+  updatePrevMonthCell(person, date, target.textContent || "");
+  target.textContent = getPrevMonthDisplayShift(person, date);
+}
+function parseColorNumbers(value){
+  const raw = String(value || "").trim().toLowerCase();
+  if(!raw || raw === "transparent" || raw === "initial" || raw === "inherit") return null;
+  const hexMatch = raw.match(/^#([0-9a-f]{3}|[0-9a-f]{6})$/i);
+  if(hexMatch){
+    const hex = hexMatch[1];
+    if(hex.length === 3){
+      return hex.split("").map(ch=>parseInt(ch + ch, 16));
+    }
+    return [0, 2, 4].map(index=>parseInt(hex.slice(index, index + 2), 16));
+  }
+  const rgbMatch = raw.match(/^rgba?\(([^)]+)\)$/);
+  if(rgbMatch){
+    const parts = rgbMatch[1].split(",").map(part=>Number(part.trim()));
+    if(parts.length >= 3 && parts.slice(0, 3).every(Number.isFinite)) return parts.slice(0, 3);
+  }
+  return null;
+}
+function normalizeColorKey(value){
+  const rgb = parseColorNumbers(value);
+  return rgb ? rgb.join(",") : "";
+}
+function isNearWhiteColor(value){
+  const rgb = parseColorNumbers(value);
+  return !!rgb && rgb.every(part=>part >= 245);
+}
+function isGrayLikeColor(value){
+  const rgb = parseColorNumbers(value);
+  if(!rgb) return false;
+  const [r, g, b] = rgb;
+  const spread = Math.max(r, g, b) - Math.min(r, g, b);
+  return spread <= 18 && (r + g + b) / 3 >= 170;
+}
+function isRedLikeColor(value){
+  const rgb = parseColorNumbers(value);
+  if(!rgb) return false;
+  const [r, g, b] = rgb;
+  return r >= 170 && g <= 110 && b <= 110;
+}
+function extractCellColor(cell, property){
+  if(!(cell instanceof HTMLElement)) return "";
+  const styleValue = cell.style?.[property];
+  if(styleValue && !isNearWhiteColor(styleValue)) return styleValue;
+  const computed = window.getComputedStyle(cell)[property];
+  if(computed && !isNearWhiteColor(computed)) return computed;
+  const inner = cell.querySelector("[style]");
+  if(inner instanceof HTMLElement){
+    const innerStyleValue = inner.style?.[property];
+    if(innerStyleValue && !isNearWhiteColor(innerStyleValue)) return innerStyleValue;
+    const innerComputed = window.getComputedStyle(inner)[property];
+    if(innerComputed && !isNearWhiteColor(innerComputed)) return innerComputed;
+  }
+  return "";
+}
+function extractClipboardHtmlMatrix(html){
+  const raw = String(html || "").trim();
+  if(!raw) return [];
+  const doc = new DOMParser().parseFromString(raw, "text/html");
+  const rows = [...doc.querySelectorAll("tr")];
+  if(!rows.length) return [];
+  return rows
+    .map(row=>[...row.querySelectorAll("th,td")].map(cell=>({
+      text: String(cell.textContent || "").replace(/\u00a0/g, " ").replace(/\s+/g, " ").trim(),
+      bgColor: extractCellColor(cell, "backgroundColor"),
+      textColor: extractCellColor(cell, "color")
+    })))
+    .filter(cells=>cells.length);
+}
+function extractClipboardPlainMatrix(text){
+  return String(text || "")
+    .replace(/\r\n/g, "\n")
+    .split("\n")
+    .filter((line, index, arr)=>line.trim() || index < arr.length - 1)
+    .map(line=>line.split("\t").map(value=>({
+      text: String(value || "").trim(),
+      bgColor: "",
+      textColor: ""
+    })));
+}
+function normalizePastedLookupText(value){
+  return String(value || "")
+    .replace(/\u00a0/g, " ")
+    .replace(/\s+/g, "")
+    .replace(/[（）]/g, match=>match === "（" ? "(" : ")")
+    .trim()
+    .toLowerCase();
+}
+function buildMonthlyPastePersonLookup(){
+  const map = new Map();
+  (latest?.all || []).forEach(person=>{
+    const keys = [person.name, PERSON_CN_NAMES[person.name] || "", person.group || ""];
+    keys.forEach(key=>{
+      const normalized = normalizePastedLookupText(key);
+      if(normalized && !map.has(normalized)) map.set(normalized, person);
+    });
+  });
+  return map;
+}
+function resolveMonthlyPasteRowPerson(row, personLookup){
+  if(!row?.length || !personLookup.size) return null;
+  const matches = [];
+  row.forEach((cell, index)=>{
+    const normalized = normalizePastedLookupText(cell?.text || cell);
+    if(!normalized) return;
+    const person = personLookup.get(normalized);
+    if(person) matches.push({ person, index });
+  });
+  if(!matches.length) return null;
+  const grouped = new Map();
+  matches.forEach(match=>{
+    const key = `${match.person.group}|${match.person.name}`;
+    const current = grouped.get(key) || { person: match.person, indexes: [] };
+    current.indexes.push(match.index);
+    grouped.set(key, current);
+  });
+  return [...grouped.values()]
+    .sort((a, b)=>b.indexes.length - a.indexes.length || Math.max(...b.indexes) - Math.max(...a.indexes))[0];
+}
+function buildMonthlyPasteDateLookup(candidateDates){
+  const full = new Map();
+  const md = new Map();
+  const slash = new Map();
+  const dayOnly = new Map();
+  candidateDates.forEach(date=>{
+    const [year, month, day] = date.split("-").map(Number);
+    if(!year || !month || !day) return;
+    full.set(`${year}-${month}-${day}`, date);
+    md.set(`${month}月${day}日`, date);
+    slash.set(`${month}/${day}`, date);
+    slash.set(`${month}-${day}`, date);
+    const dayKey = String(day);
+    const bucket = dayOnly.get(dayKey) || [];
+    bucket.push(date);
+    dayOnly.set(dayKey, bucket);
+  });
+  return { full, md, slash, dayOnly };
+}
+function parsePastedMonthlyDate(value, dateLookup){
+  const normalized = normalizePastedLookupText(value).replace(/周[一二三四五六日天]/g, "");
+  if(!normalized) return "";
+  let match = normalized.match(/^(\d{4})[-/](\d{1,2})[-/](\d{1,2})$/);
+  if(match) return dateLookup.full.get(`${Number(match[1])}-${Number(match[2])}-${Number(match[3])}`) || "";
+  match = normalized.match(/^(\d{1,2})月(\d{1,2})日$/);
+  if(match) return dateLookup.md.get(`${Number(match[1])}月${Number(match[2])}日`) || "";
+  match = normalized.match(/^(\d{1,2})[/-](\d{1,2})$/);
+  if(match) return dateLookup.slash.get(`${Number(match[1])}/${Number(match[2])}`) || dateLookup.slash.get(`${Number(match[1])}-${Number(match[2])}`) || "";
+  match = normalized.match(/^(\d{1,2})(?:日|号)?$/);
+  if(match){
+    const candidates = dateLookup.dayOnly.get(String(Number(match[1]))) || [];
+    return candidates.length === 1 ? candidates[0] : "";
+  }
+  return "";
+}
+function detectMonthlyPasteDateColumns(matrix, candidateDates){
+  const dateLookup = buildMonthlyPasteDateLookup(candidateDates);
+  let best = null;
+  matrix.forEach((row, rowIndex)=>{
+    const columns = new Map();
+    row.forEach((cell, colIndex)=>{
+      const date = parsePastedMonthlyDate(cell?.text || cell, dateLookup);
+      if(date) columns.set(colIndex, date);
+    });
+    const uniqueCount = new Set(columns.values()).size;
+    if(uniqueCount < 3) return;
+    if(!best || uniqueCount > best.count) best = { rowIndex, count: uniqueCount, columns };
+  });
+  return best;
+}
+function applyStructuredMonthlySchedulePaste(matrix){
+  if(!latest || !matrix?.length) return false;
+  const displayDates = getMonthlyDisplayDates(latest);
+  if(!displayDates.length) return false;
+  const personLookup = buildMonthlyPastePersonLookup();
+  if(!personLookup.size) return false;
+  const personRows = matrix
+    .map((row, rowIndex)=>({ row, rowIndex, match: resolveMonthlyPasteRowPerson(row, personLookup) }))
+    .filter(item=>item.match?.person);
+  if(!personRows.length) return false;
+  const dateHeader = detectMonthlyPasteDateColumns(matrix, displayDates);
+  const touchedPrevPeople = new Set();
+  let changedCurrent = false;
+  let changedPrev = false;
+  const applyToDate = (person, date, cellText)=>{
+    const rawText = String(cellText || "").trim();
+    if(!rawText) return false;
+    if(isDateInCurrentMonth(date)){
+      const parsed = parseManualCellClipboardText(rawText, person, date);
+      if(!parsed) return false;
+      applyManualShiftValue(person, date, parsed.shiftValue || getManualShiftValueForDate(person, date), parsed.tagValue, "整表粘贴修改");
+      changedCurrent = true;
+      return true;
+    }
+    const normalized = normalizePrevScheduleCell(rawText);
+    if(!normalized.display && !normalized.normalized) return false;
+    updatePrevMonthCell(person, date, normalized.display || normalized.normalized || rawText);
+    touchedPrevPeople.add(person);
+    changedPrev = true;
+    return true;
+  };
+  if(dateHeader){
+    personRows.forEach(item=>{
+      dateHeader.columns.forEach((date, colIndex)=>{
+        applyToDate(item.match.person, date, item.row[colIndex]?.text || "");
+      });
+    });
+  }else{
+    let changedSequential = false;
+    personRows.forEach(item=>{
+      const scheduleStartIndex = Math.max(...item.match.indexes) + 1;
+      if(item.row.length - scheduleStartIndex < Math.min(7, displayDates.length)) return;
+      displayDates.forEach((date, offset)=>{
+        if(applyToDate(item.match.person, date, item.row[scheduleStartIndex + offset]?.text || "")) changedSequential = true;
+      });
+    });
+    if(!changedSequential && !changedCurrent && !changedPrev) return false;
+  }
+  if(!changedCurrent && !changedPrev) return false;
+  touchedPrevPeople.forEach(person=>recalculatePrevMonthCarry(person));
+  if(changedCurrent){
+    finalizeManualScheduleEdit();
+  }else{
+    render(latest);
+  }
+  return true;
+}
+function buildPastedColorShiftMap(matrix){
+  const bucket = new Map();
+  matrix.flat().forEach(cell=>{
+    const info = normalizePrevScheduleCell(cell.text);
+    const colorKey = normalizeColorKey(cell.bgColor);
+    if(!colorKey || !info.display) return;
+    const counts = bucket.get(colorKey) || new Map();
+    counts.set(info.display, (counts.get(info.display) || 0) + 1);
+    bucket.set(colorKey, counts);
+  });
+  const colorMap = new Map();
+  bucket.forEach((counts, colorKey)=>{
+    const winner = [...counts.entries()].sort((a, b)=>b[1] - a[1])[0];
+    if(winner) colorMap.set(colorKey, winner[0]);
+  });
+  return colorMap;
+}
+function resolvePastedPrevMonthValue(cell, colorMap){
+  const rawText = String(cell?.text || "").trim();
+  const info = normalizePrevScheduleCell(rawText);
+  if(info.display) return info.display;
+  if(rawText) return rawText;
+  if(isRedLikeColor(cell?.textColor)) return SHIFT_LEAVE_MANUAL;
+  const colorKey = normalizeColorKey(cell?.bgColor);
+  if(colorKey && colorMap.has(colorKey)) return colorMap.get(colorKey);
+  if(isGrayLikeColor(cell?.bgColor)) return SHIFT_REST;
+  return "";
+}
+function handlePrevMonthCellPaste(event){
+  const clipboardHtml = event.clipboardData?.getData("text/html");
+  const clipboardText = event.clipboardData?.getData("text/plain");
+  const htmlMatrix = extractClipboardHtmlMatrix(clipboardHtml);
+  const matrix = htmlMatrix.length ? htmlMatrix : extractClipboardPlainMatrix(clipboardText);
+  if(!matrix.length) return;
+  if(applyStructuredMonthlySchedulePaste(matrix)){
+    event.preventDefault();
+    return;
+  }
+  if(handleManualSchedulePaste(event)) return;
+  const target = resolvePrevMonthCellTarget(event.target);
+  if(!(target instanceof HTMLElement) || !latest) return;
+  event.preventDefault();
+  const startDate = target.dataset.date;
+  const prevDates = getLeadingPrevDates(latest.month, 7);
+  const startCol = prevDates.indexOf(startDate);
+  const rowCells = [...document.querySelectorAll("#monthly [data-action='prev-shift']")];
+  const rowStarts = rowCells.filter((cell, index)=>index === 0 || rowCells[index - 1].dataset.index !== cell.dataset.index || rowCells[index - 1].dataset.group !== cell.dataset.group);
+  const startRow = rowStarts.findIndex(cell=>cell.dataset.group === target.dataset.group && cell.dataset.index === target.dataset.index);
+  if(startCol < 0 || startRow < 0) return;
+  const colorMap = buildPastedColorShiftMap(matrix);
+  matrix.forEach((cols, rowOffset)=>{
+    const rowCell = rowStarts[startRow + rowOffset];
+    if(!rowCell) return;
+    const person = getPersonByMonthlyDataset(rowCell.dataset.group, rowCell.dataset.index);
+    if(!person) return;
+    cols.forEach((cell, colOffset)=>{
+      const date = prevDates[startCol + colOffset];
+      if(!date) return;
+      updatePrevMonthCell(person, date, resolvePastedPrevMonthValue(cell, colorMap));
+    });
+  });
+  render(latest);
+}
+function moveMonthlyDateColumn(fromDate, toDate){
+  if(!latest || !fromDate || !toDate || fromDate === toDate) return;
+  const dates = getMonthlyDisplayDates(latest);
+  const fromIndex = dates.indexOf(fromDate);
+  const toIndex = dates.indexOf(toDate);
+  if(fromIndex < 0 || toIndex < 0) return;
+  const [moved] = dates.splice(fromIndex, 1);
+  dates.splice(toIndex, 0, moved);
+  latest.displayDates = dates;
+  render(latest);
+}
+function readMonthlyDragPayload(event){
+  const raw = event.dataTransfer.getData("text/plain");
+  try{
+    return JSON.parse(raw);
+  }catch(_){
+    return raw ? {type:"date", date:raw} : null;
+  }
+}
+function moveMonthlyPersonRow(group, fromIndex, toIndex){
+  if(!latest || !["ecom", "tech"].includes(group) || fromIndex === toIndex) return;
+  const people = latest[group];
+  if(!people || fromIndex < 0 || toIndex < 0 || fromIndex >= people.length || toIndex >= people.length) return;
+  const [moved] = people.splice(fromIndex, 1);
+  people.splice(toIndex, 0, moved);
+  latest.all = [...latest.ecom, ...latest.tech];
+  render(latest);
+}
+function handleMonthlyDragStart(event){
+  if(event.target.closest?.("select")) return;
+  const header = event.target.closest?.(".draggableDate");
+  if(header){
+    event.dataTransfer.setData("text/plain", JSON.stringify({type:"date", date:header.dataset.date || ""}));
+    event.dataTransfer.effectAllowed = "move";
+    return;
+  }
+  const row = event.target.closest?.(".draggablePersonRow");
+  if(row){
+    event.dataTransfer.setData("text/plain", JSON.stringify({type:"row", group:row.dataset.group || "", index:Number(row.dataset.index)}));
+    event.dataTransfer.effectAllowed = "move";
+  }
+}
+function handleMonthlyDragOver(event){
+  const header = event.target.closest?.(".draggableDate");
+  const row = event.target.closest?.(".draggablePersonRow");
+  const target = header || row;
+  if(!target) return;
+  event.preventDefault();
+  target.classList.add("dragOver");
+}
+function handleMonthlyDragLeave(event){
+  const header = event.target.closest?.(".draggableDate");
+  const row = event.target.closest?.(".draggablePersonRow");
+  if(header) header.classList.remove("dragOver");
+  if(row) row.classList.remove("dragOver");
+}
+function handleMonthlyDrop(event){
+  const payload = readMonthlyDragPayload(event);
+  if(!payload) return;
+  event.preventDefault();
+  document.querySelectorAll("#monthly .dragOver").forEach(el=>el.classList.remove("dragOver"));
+  if(payload.type === "date"){
+    const header = event.target.closest?.(".draggableDate");
+    if(header) moveMonthlyDateColumn(payload.date, header.dataset.date);
+    return;
+  }
+  if(payload.type === "row"){
+    const row = event.target.closest?.(".draggablePersonRow");
+    if(row && row.dataset.group === payload.group){
+      moveMonthlyPersonRow(payload.group, Number(payload.index), Number(row.dataset.index));
+    }
+  }
+}
+function normalizePrevScheduleCell(value){
+  const raw = String(value || "").trim();
+  if(!raw || raw === "空白" || raw === "-" || raw === "—") return { normalized:"", display:"" };
+  if(raw === "/" || raw === "／" || raw === "\\" || raw === "、") return { normalized:SHIFT_REST, display:SHIFT_REST };
+  if(raw === "正" || raw.includes(SHIFT_NORMAL)) return { normalized:SHIFT_NORMAL, display:raw === "正" ? SHIFT_NORMAL : raw };
+  if(raw === "中1" || raw === "中一" || raw.includes(SHIFT_MID1)) return { normalized:SHIFT_MID1, display:raw === "中1" || raw === "中一" ? SHIFT_MID1 : raw };
+  if(raw === "中2" || raw === "中二" || raw.includes(SHIFT_MID2)) return { normalized:SHIFT_MID2, display:raw === "中2" || raw === "中二" ? SHIFT_MID2 : raw };
+  if(raw === "休" || raw.includes(SHIFT_REST)) return { normalized:SHIFT_REST, display:raw === "休" ? SHIFT_REST : SHIFT_REST };
+  if(raw === "假" || raw.includes(SHIFT_LEAVE_MANUAL) || raw.includes("(假)") || raw.includes("请假")) return { normalized:"", display:SHIFT_LEAVE_MANUAL };
+  return { normalized:"", display:raw };
+}
+function preparePrevScheduleText(text){
+  return String(text || "")
+    .replace(/(\d{1,2})(日|号)\r?\n(周[一二三四五六日天])/g, "$1$2 $3")
+    .replace(/\r\n/g, "\n")
+    .trim();
+}
+function recalculatePrevMonthCarry(person){
+  const dayNumbers = Object.keys(person.prevMonthDayMap || {}).map(Number).sort((a, b)=>a - b);
+  let carryWork = 0;
+  let carryRest = 0;
+  for(let i = dayNumbers.length - 1; i >= 0; i--){
+    const info = normalizePrevScheduleCell(person.prevMonthDayMap[dayNumbers[i]]);
+    const value = info.normalized;
+    if(isWorkShift(value)){
+      if(carryRest > 0) break;
+      carryWork++;
+      continue;
+    }
+    if(value === SHIFT_REST){
+      if(carryWork > 0) break;
+      carryRest++;
+      continue;
+    }
+    break;
+  }
+  person.carryWork = carryWork;
+  person.carryRest = carryRest;
+}
+function parsePrevSchedule(allPeople){
+  const text = preparePrevScheduleText($("prevSchedule").value);
+  if(!text) return;
+  const rows = text.split(/\n/).map(line=>line.split(/\t|,/).map(x=>x.trim())).filter(cells=>cells.some(Boolean));
+  let dayColumnMap = null;
+  for(const cells of rows){
+    const candidate = {};
+    cells.forEach((cell, index)=>{
+      const match = String(cell || "").trim().match(/(\d{1,2})\s*(?:日|号)/);
+      if(match) candidate[index] = Number(match[1]);
+    });
+    if(Object.keys(candidate).length >= 7){
+      dayColumnMap = candidate;
+      break;
+    }
+  }
+  for(const cells of rows){
+    const person = allPeople.find(p=>cells.includes(p.name));
+    if(!person) continue;
+    const dayMap = {};
+    if(dayColumnMap){
+      Object.entries(dayColumnMap).forEach(([index, day])=>{
+        dayMap[day] = normalizePrevScheduleCell(cells[Number(index)]);
+      });
+    }else{
+      const idx = cells.indexOf(person.name);
+      const dayCells = cells.slice(idx + 1).filter(c =>
+        [SHIFT_NORMAL, SHIFT_MID1, SHIFT_MID2, SHIFT_REST, "", SHIFT_LEAVE_MANUAL].includes(c) || c === "\u7a7a\u767d" || c.includes("(假)")
+      );
+      dayCells.forEach((value, dayIndex)=>{
+        dayMap[dayIndex + 1] = normalizePrevScheduleCell(value);
+      });
+    }
+    person.prevMonthDayMap = {};
+    Object.keys(dayMap).map(Number).sort((a, b)=>a - b).forEach(day=>{
+      const info = dayMap[day] || { normalized:"", display:"" };
+      person.prevMonthDayMap[day] = info.display;
+    });
+    recalculatePrevMonthCarry(person);
+  }
+}
+function getLeadingPrevDates(month, count = 7){
+  if(!month) return [];
+  const [y, m] = month.split("-").map(Number);
+  if(!y || !m) return [];
+  const firstDate = new Date(y, m - 1, 1);
+  const dates = [];
+  for(let offset = count; offset >= 1; offset--){
+    const d = new Date(firstDate);
+    d.setDate(d.getDate() - offset);
+    dates.push(iso(d.getFullYear(), d.getMonth() + 1, d.getDate()));
+  }
+  return dates;
+}
+function getPrevMonthDisplayShift(person, date){
+  const day = Number(String(date).slice(8));
+  return person.prevMonthDayMap?.[day] || "";
+}
+function updatePrevMonthCell(person, date, value){
+  const info = normalizePrevScheduleCell(value);
+  const day = Number(String(date).slice(8));
+  person.prevMonthDayMap = person.prevMonthDayMap || {};
+  person.prevMonthDayMap[day] = info.display;
+}
+function pickLeastWorked(list, date, shift, dates, avoidNames=[]){
+  return list
+    .filter(p=>!avoidNames.includes(p.name))
+    .filter(p=>canAssign(p, date, shift, dates))
+    .sort((a, b)=>{
+      const aw = attendanceCount(a, dates) / Math.max(1, a.targetWork);
+      const bw = attendanceCount(b, dates) / Math.max(1, b.targetWork);
+      const ar = a.wantRest.has(date) ? 1 : 0;
+      const br = b.wantRest.has(date) ? 1 : 0;
+      const amw = isMonWed(date) ? restCount(a, dates) : 0;
+      const bmw = isMonWed(date) ? restCount(b, dates) : 0;
+      return ar - br
+        || aw - bw
+        || amw - bmw
+        || a.name.localeCompare(b.name, "zh-Hans-CN");
+    })[0];
+}
+function getOpenTechDutyShifts(date, techDuty){
+  const options = [];
+  const techNormal = techDuty.filter(p=>p.days[date] === SHIFT_NORMAL).length;
+  const techMid1 = techDuty.filter(p=>p.days[date] === SHIFT_MID1).length;
+  const techMid2 = techDuty.filter(p=>p.days[date] === SHIFT_MID2).length;
+  if(techNormal < 1) options.push(SHIFT_NORMAL);
+  if(techMid1 < 1) options.push(SHIFT_MID1);
+  if(techMid2 < 1) options.push(SHIFT_MID2);
+  return options;
+}
+function tryAssignTechDutyGapForAttendance(person, dates, techDuty){
+  if(person.group !== "\u6280\u672f\u5ba2\u670d\u7ec4" || !isCoverageEligible(person)) return false;
+  for(const date of dates){
+    const shifts = getOpenTechDutyShifts(date, techDuty);
+    if(!shifts.length) continue;
+    for(const shift of shifts){
+      if(canAssignForLevel1Target(person, date, shift, dates)){
+        assign(person, date, shift, "\u4e3a\u8865\u8db3\u51fa\u52e4\u5929\u6570\uff0c\u8865\u5165\u6280\u672f\u7ec4\u503c\u73ed\u7a7a\u7f3a");
+        return true;
+      }
+    }
+  }
+  return false;
+}
+function tryConvertRestToTechDutyGapForAttendance(person, dates, techDuty){
+  if(person.group !== "\u6280\u672f\u5ba2\u670d\u7ec4" || !isCoverageEligible(person)) return false;
+  for(const date of dates){
+    if(person.days[date] !== SHIFT_REST) continue;
+    const shifts = getOpenTechDutyShifts(date, techDuty);
+    if(!shifts.length) continue;
+    for(const shift of shifts){
+      if(canConvertRestToWork(person, date, shift, dates)){
+        person.days[date] = shift;
+        person.notes.push(`${date} \u4e3a\u8865\u8db3\u51fa\u52e4\u5929\u6570\uff0c\u7531\u4f11\u606f\u6539\u4e3a${shift}\u5e76\u8865\u5165\u6280\u672f\u503c\u73ed\u7a7a\u7f3a`);
+        return true;
+      }
+    }
+  }
+  return false;
+}
+function chooseEcomWeekend(ecom, lastSet){
+  const pool = ecom.filter(p=>p.name !== "Amber" && isCoverageEligible(p));
+  return pool.find(p=>!lastSet.has(p.name)) || pool[0] || ecom[0];
+}
+function chooseTechWeekend(tech, lastSet){
+  const pool = tech.filter(p=>!["John", "Arya"].includes(p.name) && isCoverageEligible(p));
+  const fresh = pool.filter(p=>!lastSet.has(p.name));
+  const selected = (fresh.length >= 3 ? fresh : pool).slice(0, 3);
+  return { [SHIFT_NORMAL]: selected[0], [SHIFT_MID1]: selected[1], [SHIFT_MID2]: selected[2] };
+}
+function getDateIndexMap(dates){
+  return new Map(dates.map((date, index)=>[date, index]));
+}
+function getAttendanceIndices(p, dates, indexMap){
+  return dates
+    .filter(d=>isWorkShift(p.days[d]) || isLeaveMarked(p, d))
+    .map(d=>indexMap.get(d))
+    .filter(index=>index !== undefined)
+    .sort((a, b)=>a - b);
+}
+function getSpreadMetrics(p, date, dates, indexMap){
+  const idx = indexMap.get(date);
+  const workIndices = getAttendanceIndices(p, dates, indexMap);
+  let prev = -1;
+  let next = dates.length;
+  for(const workIdx of workIndices){
+    if(workIdx < idx) prev = workIdx;
+    if(workIdx > idx){ next = workIdx; break; }
+  }
+  const leftGap = idx - prev;
+  const rightGap = next - idx;
+  return {
+    idx,
+    nearestGap: Math.min(leftGap, rightGap),
+    balanceGap: Math.abs(leftGap - rightGap),
+    centerDistance: Math.abs(idx - ((dates.length - 1) / 2))
+  };
+}
+function getSegmentBounds(dates, index, matcher){
+  if(index < 0 || index >= dates.length || !matcher(dates[index])) return { start:index, end:index, length:0 };
+  let start = index;
+  let end = index;
+  while(start > 0 && matcher(dates[start - 1])) start--;
+  while(end < dates.length - 1 && matcher(dates[end + 1])) end++;
+  return { start, end, length:end - start + 1 };
+}
+function getSegmentLengthsAroundDate(p, date, dates, shift){
+  const index = dates.indexOf(date);
+  if(index < 0) return null;
+  const old = p.days[date];
+  p.days[date] = shift;
+  const workMatcher = d=>isWorkShift(p.days[d]);
+  const restMatcher = d=>p.days[d] === SHIFT_REST;
+  const sameMatcher = shift === SHIFT_REST ? restMatcher : workMatcher;
+  const oppositeMatcher = shift === SHIFT_REST ? workMatcher : restMatcher;
+  const segment = getSegmentBounds(dates, index, sameMatcher);
+  if(shift !== SHIFT_REST && segment.start === 0) segment.length += p.carryWork || 0;
+  if(shift === SHIFT_REST && segment.start === 0) segment.length += p.carryRest || 0;
+  let leftOpposite = 0;
+  let rightOpposite = 0;
+  if(segment.start > 0){
+    const leftSegment = getSegmentBounds(dates, segment.start - 1, oppositeMatcher);
+    leftOpposite = leftSegment.length;
+    if(shift === SHIFT_REST && leftSegment.start === 0) leftOpposite += p.carryWork || 0;
+    if(shift !== SHIFT_REST && leftSegment.start === 0) leftOpposite += p.carryRest || 0;
+  }
+  if(segment.end < dates.length - 1){
+    const rightSegment = getSegmentBounds(dates, segment.end + 1, oppositeMatcher);
+    rightOpposite = rightSegment.length;
+  }
+  if(old === undefined) delete p.days[date]; else p.days[date] = old;
+  return {
+    sameLength: segment.length,
+    leftOpposite,
+    rightOpposite
+  };
+}
+function scoreTargetDistance(length, targets){
+  if(!length) return 0;
+  return Math.min(...targets.map(target=>Math.abs(length - target)));
+}
+function getWorkCadenceMetrics(p, date, dates){
+  if(isBackupWeekendRestPerson(p)){
+    return {
+      workPenalty: isWeekday(date) ? 0 : 50,
+      restPenalty: 0
+    };
+  }
+  const metrics = getSegmentLengthsAroundDate(p, date, dates, SHIFT_NORMAL);
+  if(!metrics) return { workPenalty:99, restPenalty:99 };
+  const sixDayWorkPenalty = metrics.sameLength === 6 ? 1 : 0;
+  const fragmentedRestPenalty =
+    (metrics.leftOpposite === 1 ? 4 : 0) +
+    (metrics.rightOpposite === 1 ? 4 : 0);
+  return {
+    workPenalty: scoreTargetDistance(metrics.sameLength, [5]) + sixDayWorkPenalty,
+    restPenalty: scoreTargetDistance(metrics.leftOpposite, [2]) + scoreTargetDistance(metrics.rightOpposite, [2]) + fragmentedRestPenalty
+  };
+}
+function getRestCadenceMetrics(p, date, dates){
+  if(isBackupWeekendRestPerson(p)){
+    return {
+      restPenalty: isWeekend(date) ? 0 : 10,
+      workPenalty: 0
+    };
+  }
+  const metrics = getSegmentLengthsAroundDate(p, date, dates, SHIFT_REST);
+  if(!metrics) return { restPenalty:99, workPenalty:99 };
+  const singleRestPenalty = metrics.sameLength === 1 ? 6 : 0;
+  const longRestPenalty = metrics.sameLength > 2 ? (metrics.sameLength - 2) * 2 : 0;
+  return {
+    restPenalty: scoreTargetDistance(metrics.sameLength, [2]) + singleRestPenalty + longRestPenalty,
+    workPenalty: scoreTargetDistance(metrics.leftOpposite, [5]) + scoreTargetDistance(metrics.rightOpposite, [5])
+  };
+}
+function sortDatesForSpread(p, candidateDates, dates, options={}){
+  const {
+    keepMonWedLate = false,
+    keepWeekendLate = false,
+    targetShift = SHIFT_NORMAL
+  } = options;
+  const indexMap = getDateIndexMap(dates);
+  return [...candidateDates].sort((a, b)=>{
+    const aMetrics = getSpreadMetrics(p, a, dates, indexMap);
+    const bMetrics = getSpreadMetrics(p, b, dates, indexMap);
+    const aCadence = targetShift === SHIFT_REST ? getRestCadenceMetrics(p, a, dates) : getWorkCadenceMetrics(p, a, dates);
+    const bCadence = targetShift === SHIFT_REST ? getRestCadenceMetrics(p, b, dates) : getWorkCadenceMetrics(p, b, dates);
+    const aMonWed = keepMonWedLate && isMonWed(a) ? 1 : 0;
+    const bMonWed = keepMonWedLate && isMonWed(b) ? 1 : 0;
+    const aWeekend = keepWeekendLate && isWeekend(a) ? 1 : 0;
+    const bWeekend = keepWeekendLate && isWeekend(b) ? 1 : 0;
+    return aCadence.workPenalty - bCadence.workPenalty
+      || aCadence.restPenalty - bCadence.restPenalty
+      || bMetrics.nearestGap - aMetrics.nearestGap
+      || aMetrics.balanceGap - bMetrics.balanceGap
+      || aMonWed - bMonWed
+      || aWeekend - bWeekend
+      || aMetrics.centerDistance - bMetrics.centerDistance
+      || a.localeCompare(b);
+  });
+}
+function sortAssignedWorkDatesForTrim(p, candidateDates, dates){
+  const indexMap = getDateIndexMap(dates);
+  return [...candidateDates].sort((a, b)=>{
+    const aCadence = getRestCadenceMetrics(p, a, dates);
+    const bCadence = getRestCadenceMetrics(p, b, dates);
+    const aMetrics = getSpreadMetrics(p, a, dates, indexMap);
+    const bMetrics = getSpreadMetrics(p, b, dates, indexMap);
+    return aCadence.restPenalty - bCadence.restPenalty
+      || aCadence.workPenalty - bCadence.workPenalty
+      || aMetrics.nearestGap - bMetrics.nearestGap
+      || bMetrics.balanceGap - aMetrics.balanceGap
+      || bMetrics.centerDistance - aMetrics.centerDistance
+      || b.localeCompare(a);
+  });
+}
+function fillExactWorkDays(all, dates, techDuty){
+  for(let round = 0; round < 500; round++){
+    let changed = false;
+    const needers = all.filter(p=>attendanceCount(p, dates) < p.targetWork);
+    if(!needers.length) break;
+    for(const p of needers){
+      if(tryAssignTechDutyGapForAttendance(p, dates, techDuty)){ changed = true; continue; }
+      const candidates = sortDatesForSpread(p, dates
+        .filter(d=>!p.days[d] && !p.wantRest.has(d))
+        .filter(d=>canAssign(p, d, SHIFT_NORMAL, dates)), dates, { keepMonWedLate:true, keepWeekendLate:true });
+      if(candidates[0]){ assign(p, candidates[0], SHIFT_NORMAL, "\u8865\u8db3\u6708\u5ea6\u51fa\u52e4\u5929\u6570"); changed = true; }
+    }
+    if(!changed) break;
+  }
+
+  // Remaining level 1 attendance gaps can only be filled on days that
+  // still keep the level 1 max-work-streak rule valid.
+  for(let round = 0; round < 500; round++){
+    let changed = false;
+    const needers = all.filter(p=>attendanceCount(p, dates) < p.targetWork);
+    if(!needers.length) break;
+    for(const p of needers){
+      if(tryAssignTechDutyGapForAttendance(p, dates, techDuty)){ changed = true; continue; }
+      const normalDates = sortDatesForSpread(p, dates
+        .filter(d=>!p.days[d])
+        .filter(d=>canAssignForLevel1Target(p, d, SHIFT_NORMAL, dates)), dates, { keepMonWedLate:true, keepWeekendLate:true });
+
+      if(normalDates[0]){
+        assign(p, normalDates[0], SHIFT_NORMAL, "\u4e3a\u6ee1\u8db3\u7b49\u7ea71\u51fa\u52e4\u5929\u6570\u5f3a\u5236\u8865\u73ed");
+        changed = true;
+      }
+    }
+    if(!changed) break;
+  }
+}
+function fillRestDays(all, dates){
+  for(const p of all){
+    for(const d of dates){
+      if(p.days[d]) continue;
+      if(isBackupWeekendRestPerson(p)){
+        if(isWeekend(d)){
+          p.days[d] = SHIFT_REST;
+          continue;
+        }
+        if(canAssign(p, d, SHIFT_NORMAL, dates) && attendanceCount(p, dates) < p.targetWork){
+          assign(p, d, SHIFT_NORMAL, "\u66ff\u8865\u4eba\u5458\u5de5\u4f5c\u65e5\u4f18\u5148\u51fa\u52e4");
+          continue;
+        }
+        p.days[d] = SHIFT_REST;
+        continue;
+      }
+      if(wouldBreakRestStreak(p, d, dates)){
+        const canWork = canAssign(p, d, SHIFT_NORMAL, dates);
+        if(canWork && attendanceCount(p, dates) < p.targetWork) assign(p, d, SHIFT_NORMAL, "\u907f\u514d\u8fde\u7eed\u4f11\u606f\u8d85\u8fc73\u5929");
+        else{ p.days[d] = SHIFT_REST; p.notes.push(`${d} \u8fde\u7eed\u4f11\u606f\u53ef\u80fd\u8d85\u8fc73\u5929\uff0c\u9700\u8981\u4eba\u5de5\u8c03\u6574`); }
+      }else p.days[d] = SHIFT_REST;
+    }
+  }
+}
+function repairExactCounts(all, dates, techDuty){
+  for(const p of all){
+    let guard = 0;
+    while(attendanceCount(p, dates) > p.targetWork && guard++ < 200){
+      const candidates = sortAssignedWorkDatesForTrim(p, dates.filter(d=>isWorkShift(p.days[d])).filter(d=>!["Amber","John","Arya"].includes(p.name) || !isWeekday(d)), dates);
+      let changed = false;
+      for(const d of candidates){
+        const old = p.days[d];
+        p.days[d] = SHIFT_REST;
+        if(maxRestStreak(p, dates) <= 3){ p.notes.push(`${d} \u56e0\u51fa\u52e4\u8d85\u989d\u6539\u4e3a\u4f11\u606f`); changed = true; break; }
+        p.days[d] = old;
+      }
+      if(!changed) break;
+    }
+    guard = 0;
+    while(attendanceCount(p, dates) < p.targetWork && guard++ < 200){
+      if(tryConvertRestToTechDutyGapForAttendance(p, dates, techDuty)) continue;
+      const candidates = sortDatesForSpread(p, dates.filter(d=>p.days[d] === SHIFT_REST).filter(d=>canConvertRestToWork(p, d, SHIFT_NORMAL, dates)), dates, { keepMonWedLate:true, keepWeekendLate:true });
+      if(!candidates.length) break;
+      const d = candidates[0];
+      if(!canConvertRestToWork(p, d, SHIFT_NORMAL, dates)) break;
+      p.days[d] = SHIFT_NORMAL;
+      p.notes.push(`${d} \u56e0\u51fa\u52e4\u4e0d\u8db3\u6539\u4e3a\u6b63\u73ed`);
+    }
+
+    guard = 0;
+    while(attendanceCount(p, dates) < p.targetWork && guard++ < 200){
+      if(tryConvertRestToTechDutyGapForAttendance(p, dates, techDuty)) continue;
+      const restCandidates = sortDatesForSpread(p, dates
+        .filter(d=>p.days[d] === SHIFT_REST)
+        .filter(d=>canConvertRestToWork(p, d, SHIFT_NORMAL, dates)), dates, { keepMonWedLate:true, keepWeekendLate:true });
+
+      if(restCandidates[0]){
+        const d = restCandidates[0];
+        p.days[d] = SHIFT_NORMAL;
+        p.notes.push(`${d} \u4e3a\u6ee1\u8db3\u7b49\u7ea71\u51fa\u52e4\u5929\u6570\uff0c\u7531\u4f11\u606f\u6539\u4e3a\u6b63\u73ed`);
+        continue;
+      }
+
+      const blankCandidates = sortDatesForSpread(p, dates
+        .filter(d=>!p.days[d])
+        .filter(d=>canAssignForLevel1Target(p, d, SHIFT_NORMAL, dates)), dates, { keepMonWedLate:true, keepWeekendLate:true });
+
+      if(blankCandidates[0]){
+        assign(p, blankCandidates[0], SHIFT_NORMAL, "\u4e3a\u6ee1\u8db3\u7b49\u7ea71\u51fa\u52e4\u5929\u6570\u5f3a\u5236\u8865\u73ed");
+        continue;
+      }
+
+      break;
+    }
+  }
+}
+function addFinalWarnings(all, dates){
+  for(const p of all){
+    if(attendanceCount(p, dates) !== p.targetWork) p.notes.push(`\u51fa\u52e4\u5929\u6570\uff08\u6b63\u73ed/\u4e2d1/\u4e2d2/\u8bf7\u5047\u5929\u6570\u76f8\u52a0\uff09\u4e0d\u5339\u914d\uff1a\u5e94${p.targetWork}\u5929\uff0c\u5b9e\u9645${attendanceCount(p, dates)}\u5929`);
+    if(restCount(p, dates) !== p.targetRest) p.notes.push(`\u4f11\u606f\u5929\u6570\u4e0d\u5339\u914d\uff1a\u5e94${p.targetRest}\u5929\uff0c\u5b9e\u9645${restCount(p, dates)}\u5929`);
+    if(maxWorkStreak(p, dates) > 6) p.notes.push(`\u8fde\u7eed\u4e0a\u73ed\u8d85\u8fc76\u5929\uff0c\u6700\u957f${maxWorkStreak(p, dates)}\u5929`);
+    if(maxRestStreak(p, dates) > 3) p.notes.push(`\u8fde\u7eed\u4f11\u606f\u8d85\u8fc73\u5929\uff0c\u6700\u957f${maxRestStreak(p, dates)}\u5929`);
+    const noTwoDayRest = !dates.some((d, i)=>dates[i+1] && p.days[d] === SHIFT_REST && p.days[dates[i+1]] === SHIFT_REST);
+    if(noTwoDayRest) p.notes.push("\u672a\u80fd\u5b89\u6392\u8fde\u7eed2\u5929\u4f11\u606f");
+  }
+}
+function addUniqueNote(person, note){
+  if(!person.notes.includes(note)) person.notes.push(note);
+}
+function validateLevel1Rules(all, tech, dates, holidays, coverageVacancies = {}){
+  const violations = [];
+  const fixedWeekdayNames = new Set(["Amber","John","Arya"]);
+  for(const date of dates){
+    if(holidays.has(date)) continue;
+    const techNormal = tech.filter(p=>isCoverageEligible(p) && p.days[date] === SHIFT_NORMAL).length;
+    const techMid1 = tech.filter(p=>isCoverageEligible(p) && p.days[date] === SHIFT_MID1).length;
+    const techMid2 = tech.filter(p=>isCoverageEligible(p) && p.days[date] === SHIFT_MID2).length;
+    const vacancyText = getCoverageVacancyText(coverageVacancies, date);
+    if(techNormal < 1 || techMid1 < 1 || techMid2 < 1){
+      violations.push(`${date} \u6280\u672f\u5ba2\u670d\u7ec4\u6bcf\u65e5\u5fc5\u987b\u6ee1\u8db3\u6b63\u73ed/\u4e2d1/\u4e2d2\u54041\u4eba${vacancyText ? `\uff0c${vacancyText}` : ""}\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+    }
+    if(isWeekend(date) && (techNormal !== 1 || techMid1 !== 1 || techMid2 !== 1)){
+      violations.push(`${date} \u5468\u516d\u5468\u65e5\u6280\u672f\u503c\u73ed\u53ea\u5141\u8bb8\u6b63\u73ed1\u4eba/\u4e2d11\u4eba/\u4e2d21\u4eba\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+    }
+  }
+  for(const person of all){
+    for(const date of dates){
+      const normalized = person.days[date] ?? "";
+      if(!SHIFT_ALLOWED.has(normalized)){ addUniqueNote(person, "\u73ed\u6b21\u540d\u79f0\u4e0d\u5408\u6cd5"); violations.push(`${person.name} ${date} \u73ed\u6b21\u540d\u79f0\u4e0d\u5408\u6cd5`); }
+      if(person.wantRest.has(date) && isWorkShift(normalized)){ addUniqueNote(person, `${date} \u8bf7\u5047\u65e5\u671f\u88ab\u6392\u73ed\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); violations.push(`${person.name} ${date} \u8bf7\u5047\u65e5\u671f\u88ab\u6392\u73ed\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); }
+      if(isWorkShift(normalized) && isShiftBlocked(person, date, normalized)){
+        const mode = person.blockedRules?.get(date);
+        const message = mode === "all" ? `${date} \u4e0d\u53ef\u7528\u65e5\u671f\u88ab\u6392\u73ed\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574` : mode === "custom_rest" ? `${date} \u81ea\u5b9a\u4e49\u4f11\u606f\u65e5\u88ab\u6392\u73ed\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574` : `${date} \u8bf7\u5047\u65f6\u6bb5\u88ab\u6392\u73ed\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`;
+        addUniqueNote(person, message);
+        violations.push(`${person.name} ${message}`);
+      }
+      if(!holidays.has(date) && normalized === ""){ addUniqueNote(person, `${date} \u6b63\u5e38\u5de5\u4f5c\u65e5\u671f\u73ed\u6b21\u4e3a\u7a7a\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); violations.push(`${person.name} ${date} \u6b63\u5e38\u5de5\u4f5c\u65e5\u671f\u73ed\u6b21\u4e3a\u7a7a\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); }
+      if(typeof normalized === "string" && /[|,\uff0c\u3001/]/.test(normalized)){ addUniqueNote(person, `${date} \u540c\u4e00\u5458\u5de5\u540c\u65e5\u591a\u73ed\u6b21\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); violations.push(`${person.name} ${date} \u540c\u4e00\u5458\u5de5\u540c\u65e5\u591a\u73ed\u6b21\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); }
+      if(fixedWeekdayNames.has(person.name) && !holidays.has(date) && isWeekday(date) && normalized !== SHIFT_NORMAL){ addUniqueNote(person, `${date} \u5de5\u4f5c\u65e5\u56fa\u5b9a\u6b63\u73ed\u672a\u6ee1\u8db3\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); violations.push(`${person.name} ${date} \u5de5\u4f5c\u65e5\u56fa\u5b9a\u6b63\u73ed\u672a\u6ee1\u8db3\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`); }
+    }
+    if(attendanceCount(person, dates) !== person.targetWork){
+      addUniqueNote(person, `\u51fa\u52e4\u5929\u6570\uff08\u542b\u8bf7\u5047\uff09\u4e0d\u6ee1\u8db3\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+      violations.push(`${person.name} \u51fa\u52e4\u5929\u6570\uff08\u542b\u8bf7\u5047\uff09\u4e0d\u6ee1\u8db3\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+    }
+    if(maxWorkStreak(person, dates) > 6){
+      addUniqueNote(person, `\u8fde\u7eed\u4e0a\u73ed\u8d85\u8fc76\u5929\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+      violations.push(`${person.name} \u8fde\u7eed\u4e0a\u73ed\u8d85\u8fc76\u5929\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+    }
+    if(maxRestStreak(person, dates) > 3){
+      addUniqueNote(person, `\u8fde\u7eed\u4f11\u606f\u8d85\u8fc73\u5929\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+      violations.push(`${person.name} \u8fde\u7eed\u4f11\u606f\u8d85\u8fc73\u5929\uff0c\u9700\u8981\u91cd\u65b0\u8c03\u6574`);
+    }
+  }
+  return [...new Set(violations)];
+}
+function validateLevel2Rules(ecom, tech, all, dates, holidays){
+  const violations = [];
+  const fixedWeekdayNames = new Set(["Amber","John","Arya"]);
+  for(const date of dates){
+    if(holidays.has(date)) continue;
+    if(dow(date) === 1){
+      for(const person of all){
+        if(!isWorkShift(person.days[date])){ addUniqueNote(person, `${date} \u5468\u4e00\u672a\u5168\u5458\u51fa\u52e4\uff0c\u9700\u8981\u7ba1\u7406\u5458\u786e\u8ba4`); violations.push(`${person.name} ${date} \u5468\u4e00\u672a\u5168\u5458\u51fa\u52e4\uff0c\u9700\u8981\u7ba1\u7406\u5458\u786e\u8ba4`); }
+      }
+    }
+  }
+  for(const person of all){
+    if(!fixedWeekdayNames.has(person.name)){
+      const workDays = dates.filter(date=>isWorkShift(person.days[date]));
+      let shiftChanges = 0;
+      let prevShift = "";
+      for(const date of workDays){ const currentShift = person.days[date]; if(prevShift && currentShift !== prevShift) shiftChanges++; prevShift = currentShift; }
+      const uniqueShifts = new Set(workDays.map(date=>person.days[date])).size;
+      if(shiftChanges >= 3 || uniqueShifts >= 3){ addUniqueNote(person, "\u73ed\u6b21\u8df3\u52a8\u8fc7\u4e8e\u9891\u7e41\uff0c\u9700\u8981\u7ba1\u7406\u5458\u786e\u8ba4"); violations.push(`${person.name} \u73ed\u6b21\u8df3\u52a8\u8fc7\u4e8e\u9891\u7e41\uff0c\u9700\u8981\u7ba1\u7406\u5458\u786e\u8ba4`); }
+    }
+  }
+  return [...new Set(violations)];
+}
+function generate(regenerateMode = "initial"){
+  const month = $("month").value;
+  if(!month) return alert(TEXT.needMonthShort);
+  const editorIssues = validateEditorData();
+  if(editorIssues.length){ alert([TEXT.validationPrefix, ...editorIssues.map(item=>`- ${item}`)].join("\n")); return; }
+  const [y, m] = month.split("-").map(Number);
+  const dim = daysInMonth(month);
+  const dates = Array.from({length:dim}, (_, i)=>iso(y, m, i + 1));
+  const holidays = splitDates($("holidays").value);
+  const ecom = parsePeople($("ecom").value, "\u7535\u5546\u5ba2\u670d\u7ec4");
+  const tech = parsePeople($("tech").value, "\u6280\u672f\u5ba2\u670d\u7ec4");
+  const all = [...ecom, ...tech];
+  parsePrevSchedule(all);
+  const lastEcom = splitDates($("lastEcomWeekend").value);
+  const lastTech = splitDates($("lastTechWeekend").value);
+  const ecomWeekend = chooseEcomWeekend(ecom, lastEcom);
+  const techWeekend = chooseTechWeekend(tech, lastTech);
+  const ecomDuty = ecom.filter(isCoverageEligible);
+  const techDuty = tech.filter(isCoverageEligible);
+  const coverageVacancies = {};
+  if(ecomWeekend && lastEcom.has(ecomWeekend.name)) ecomWeekend.notes.push("\u5468\u672b\u503c\u73ed\u672a\u80fd\u8f6e\u6362");
+  Object.values(techWeekend).forEach(p=>{ if(p && lastTech.has(p.name)) p.notes.push("\u6280\u672f\u5ba2\u670d\u5468\u672b\u503c\u73ed\u672a\u80fd\u5b8c\u5168\u8f6e\u6362"); });
+  for(const d of dates){
+    if(holidays.has(d)){ all.forEach(p=>p.days[d] = ""); continue; }
+    if(isWeekend(d)){
+      if(ecomWeekend && canAssign(ecomWeekend, d, SHIFT_NORMAL, dates)) assign(ecomWeekend, d, SHIFT_NORMAL);
+      else{
+        const replacement = pickLeastWorked(ecomDuty, d, SHIFT_NORMAL, dates, ["Amber"]);
+        if(replacement) assign(replacement, d, SHIFT_NORMAL, "\u7535\u5546\u5468\u672b\u56fa\u5b9a\u503c\u73ed\u51b2\u7a81\uff0c\u5df2\u4e34\u65f6\u66ff\u6362");
+      }
+      for(const [shift, p] of Object.entries(techWeekend)){
+        if(p && canAssign(p, d, shift, dates)) assign(p, d, shift);
+        else{
+          const replacement = pickLeastWorked(techDuty, d, shift, dates, ["John","Arya"]);
+          if(replacement) assign(replacement, d, shift, `\u6280\u672f\u5468\u672b${shift}\u56fa\u5b9a\u503c\u73ed\u51b2\u7a81\uff0c\u5df2\u4e34\u65f6\u66ff\u6362`);
+          else addCoverageVacancy(coverageVacancies, d, shift);
+        }
+      }
+    }else{
+      const amber = ecomDuty.find(p=>p.name === "Amber");
+      if(amber && canAssign(amber, d, SHIFT_NORMAL, dates)) assign(amber, d, SHIFT_NORMAL);
+      else if(amber) amber.notes.push(`${d} Amber \u5de5\u4f5c\u65e5\u56fa\u5b9a\u6b63\u73ed\u672a\u80fd\u5b89\u6392`);
+      for(const fixedName of ["John","Arya"]){
+        const p = techDuty.find(x=>x.name === fixedName);
+        if(p && canAssign(p, d, SHIFT_NORMAL, dates)) assign(p, d, SHIFT_NORMAL);
+        else if(p) p.notes.push(`${d} ${fixedName} \u5de5\u4f5c\u65e5\u56fa\u5b9a\u6b63\u73ed\u672a\u80fd\u5b89\u6392`);
+      }
+      const m1 = pickLeastWorked(techDuty, d, SHIFT_MID1, dates, ["John","Arya"]);
+      if(m1) assign(m1, d, SHIFT_MID1);
+      else addCoverageVacancy(coverageVacancies, d, SHIFT_MID1);
+      const m2 = pickLeastWorked(techDuty, d, SHIFT_MID2, dates, ["John","Arya",m1?.name]);
+      if(m2) assign(m2, d, SHIFT_MID2);
+      else addCoverageVacancy(coverageVacancies, d, SHIFT_MID2);
+      if(!techDuty.some(p=>p.days[d] === SHIFT_NORMAL)) addCoverageVacancy(coverageVacancies, d, SHIFT_NORMAL);
+    }
+  }
+  applyCustomRestDays(all, dates, holidays);
+  fillExactWorkDays(all, dates, techDuty);
+  fillRestDays(all, dates);
+  repairExactCounts(all, dates, techDuty);
+  applyCustomRestDays(all, dates, holidays);
+  clearHolidayAssignments(all, dates, holidays);
+  const finalCoverageVacancies = enforceTechCoverage(techDuty, dates, holidays);
+  addFinalWarnings(all, dates);
+  applyCustomRestDays(all, dates, holidays);
+  clearHolidayAssignments(all, dates, holidays);
+  for(const [date, shifts] of Object.entries(finalCoverageVacancies)){
+    for(const shift of shifts) addCoverageVacancy(coverageVacancies, date, shift);
+  }
+  const level1Violations = validateLevel1Rules(all, tech, dates, holidays, coverageVacancies);
+  const level2Violations = validateLevel2Rules(ecom, tech, all, dates, holidays);
+  latest = { month, dates, ecom, tech, all, holidays, coverageVacancies, level1Violations, level2Violations, publishable: level1Violations.length === 0, requiresAdminConfirmation: level1Violations.length === 0 && level2Violations.length > 0, regenerateMode };
+  lastGeneratedConfigSnapshot = getPageConfigSnapshot();
+  updateGenerateButton(true);
+  render(latest);
+}
+function cellClass(p, date){
+  if(latest?.holidays?.has(date) && !p.days[date] && !isLeaveMarked(p, date)) return "restCell";
+  const v = p.days[date];
+  if(isLeaveMarked(p, date) && !isWorkShift(v)) return "leaveCell";
+  if(v === SHIFT_REST) return "restCell";
+  if(v === SHIFT_BLANK) return "blankCell";
+  return "";
+}
+function cellStyle(p, v){
+  if(isWorkShift(v)) return `background:${COLORS[p.name] || "#e0f2fe"};font-weight:700`;
+  return "";
+}
+function getDayTagLabel(tag){
+  return MANUAL_TAG_OPTIONS.find(option=>option.value === tag)?.display || "";
+}
+function renderTagOptions(selectedValue){
+  return [`<option value="" ${!selectedValue ? "selected" : ""}>&#8203;</option>`, ...MANUAL_TAG_OPTIONS.map(option=>`<option value="${esc(option.value)}" ${selectedValue === option.value ? "selected" : ""}>${esc(option.label)}</option>`)].join("");
+}
+function getShiftDisplayLabel(value){
+  if(value === SHIFT_NORMAL) return "正";
+  if(value === SHIFT_MID1) return "中1";
+  if(value === SHIFT_MID2) return "中2";
+  return value;
+}
+function getComparePlanLookup(compareLatest){
+  if(!compareLatest) return new Map();
+  const allPeople = [...(compareLatest.ecom || []), ...(compareLatest.tech || [])];
+  return new Map(allPeople.map(person=>[`${person.group}|${person.name}`, person]));
+}
+function getComparableCurrentCellValue(person, date){
+  if(!isDateInCurrentMonth(date)) return getPrevMonthDisplayShift(person, date) || "";
+  return `${displayShift(person, date) || ""}${getDayTagLabel(person.dayTags?.[date] || "")}`.trim();
+}
+function isCompareCellDifferent(person, comparePerson, date){
+  if(!comparePlanKey || !comparePerson) return false;
+  return getComparableCurrentCellValue(person, date) !== getComparableCurrentCellValue(comparePerson, date);
+}
+function renderShiftSelect(p, groupKey, personIndex, date){
+  const tagEditKey = getTagEditKey(groupKey, personIndex, date);
+  const isEditingTag = editingTagKey === tagEditKey;
+  if(latest?.holidays?.has(date)){
+    const holidayValue = isLeaveMarked(p, date) && !isWorkShift(p.days[date]) ? SHIFT_LEAVE_MANUAL : (p.days[date] || SHIFT_REST);
+    const holidayTagValue = p.dayTags?.[date] || "";
+    const holidayOptions = [
+      [SHIFT_LEAVE_MANUAL, SHIFT_LEAVE_MANUAL],
+      [SHIFT_REST, SHIFT_REST],
+      [SHIFT_NORMAL, getShiftDisplayLabel(SHIFT_NORMAL)],
+      [SHIFT_MID1, getShiftDisplayLabel(SHIFT_MID1)],
+      [SHIFT_MID2, getShiftDisplayLabel(SHIFT_MID2)]
+    ];
+    const canHolidayTag = holidayValue && holidayValue !== SHIFT_LEAVE_MANUAL && holidayValue !== SHIFT_REST;
+    return `<div class="scheduleCellWrap"><select class="scheduleSelect" data-action="manual-shift" data-group="${groupKey}" data-index="${personIndex}" data-date="${date}">${holidayOptions.map(([optionValue, label])=>`<option value="${esc(optionValue)}" ${holidayValue === optionValue ? "selected" : ""}>${esc(label)}</option>`).join("")}</select>${holidayTagValue && !isEditingTag ? `<button type="button" class="tagBadge" data-action="edit-tag" data-group="${groupKey}" data-index="${personIndex}" data-date="${date}">${esc(getDayTagLabel(holidayTagValue))}</button>` : `<select class="tagSelect" data-action="manual-tag" data-group="${groupKey}" data-index="${personIndex}" data-date="${date}" data-has-tag="${holidayTagValue ? "1" : "0"}" ${canHolidayTag ? "" : "disabled"}>${renderTagOptions(holidayTagValue)}</select>`}</div>`;
+  }
+  const value = isCustomRestMarked(p, date) ? SHIFT_REST : (isLeaveMarked(p, date) && !isWorkShift(p.days[date]) ? SHIFT_LEAVE_MANUAL : (p.days[date] ?? ""));
+  const tagValue = p.dayTags?.[date] || "";
+  const options = [
+    [SHIFT_LEAVE_MANUAL, SHIFT_LEAVE_MANUAL],
+    [SHIFT_REST, SHIFT_REST],
+    [SHIFT_NORMAL, getShiftDisplayLabel(SHIFT_NORMAL)],
+    [SHIFT_MID1, getShiftDisplayLabel(SHIFT_MID1)],
+    [SHIFT_MID2, getShiftDisplayLabel(SHIFT_MID2)]
+  ];
+  const canTag = value && value !== SHIFT_LEAVE_MANUAL;
+  return `<div class="scheduleCellWrap"><select class="scheduleSelect" data-action="manual-shift" data-group="${groupKey}" data-index="${personIndex}" data-date="${date}">${options.map(([optionValue, label])=>`<option value="${esc(optionValue)}" ${value === optionValue ? "selected" : ""}>${esc(label)}</option>`).join("")}</select>${tagValue && !isEditingTag ? `<button type="button" class="tagBadge" data-action="edit-tag" data-group="${groupKey}" data-index="${personIndex}" data-date="${date}">${esc(getDayTagLabel(tagValue))}</button>` : `<select class="tagSelect" data-action="manual-tag" data-group="${groupKey}" data-index="${personIndex}" data-date="${date}" data-has-tag="${tagValue ? "1" : "0"}" ${canTag ? "" : "disabled"}>${renderTagOptions(tagValue)}</select>`}</div>`;
+}
+function countDailyShift(all, date, shift){
+  return all.filter(p=>p.days[date] === shift).length;
+}
+function getMonthlyDisplayDates(r){
+  const prevDates = getLeadingPrevDates(r.month, 7);
+  const expectedDates = [...prevDates, ...r.dates];
+  if(!r.displayDates || r.displayDates.length !== expectedDates.length || r.displayDates.some((date, index)=>date !== expectedDates[index])){
+    r.displayDates = expectedDates;
+    r.prevDisplayDates = prevDates;
+  }
+  return r.displayDates;
+}
+function renderMonthlyHead(dates, currentDates, holidays){
+  return dates.map(d=>{
+    const isCurrentMonthDate = currentDates.includes(d);
+    const [year, month, day] = d.split("-").map(Number);
+    const className = [
+      isCurrentMonthDate ? "" : "prevMonthHead",
+      holidays.has(d) ? "holidayHead" : "",
+      isKeyDisplayDay(d) ? "keyDayCell" : ""
+    ].filter(Boolean).join(" ");
+    const title = isCurrentMonthDate ? d : "\u4e0a\u6708\u6708\u672b\u6392\u73ed";
+    return `<th class="${className}" data-date="${d}" title="${title}">${month}\u6708${day}\u65e5<br>\u5468${weekName(d)}</th>`;
+  }).join("");
+}
+function renderMonthlySummaryRows(tech, dates, currentDates){
+  const techDutyForStats = tech.filter(p=>isCoverageEligible(p));
+  const rows = [
+    [SHIFT_NORMAL, "\u6280\u672f\u503c\u73ed\u5750\u5e2d\u6b63\u73ed\u4eba\u6570"],
+    [SHIFT_MID1, "\u6280\u672f\u503c\u73ed\u5750\u5e2d\u4e2d1\u4eba\u6570"],
+    [SHIFT_MID2, "\u6280\u672f\u503c\u73ed\u5750\u5e2d\u4e2d2\u4eba\u6570"]
+  ];
+  return rows.map(([shift, label])=>`
+    <tr class="summaryRow">
+      <td colspan="3" class="summaryStickyLabel">${label}</td>
+      ${dates.map(date=>{
+        if(!currentDates.includes(date)) return `<td class="prevMonthCell"></td>`;
+        const count = countDailyShift(techDutyForStats, date, shift);
+        const countClass = count === 0 ? "bad" : shift === SHIFT_NORMAL && count > 1 ? "ok" : "";
+        return `<td class="${[isKeyDisplayDay(date) ? "keyDayCell" : "", countClass].filter(Boolean).join(" ")}">${count}</td>`;
+      }).join("")}
+      <td></td>
+      <td class="stickyCount stickyWork"></td>
+      <td class="stickyCount stickyRest"></td>
+    </tr>
+  `).join("");
+}
+function renderStaticShiftDisplay(person, date){
+  const shiftValue = isDateInCurrentMonth(date) ? displayShift(person, date) : (getPrevMonthDisplayShift(person, date) || "");
+  const tagValue = isDateInCurrentMonth(date) ? (person.dayTags?.[date] || "") : "";
+  return `<div class="scheduleCellWrap"><span style="font-weight:800;color:inherit">${esc(shiftValue)}</span>${tagValue ? `<span class="tagBadge">${esc(getDayTagLabel(tagValue))}</span>` : ""}</div>`;
+}
+function renderMonthlyGroup(groupName, groupKey, people, dates, options = {}){
+  const { interactive = true } = options;
+  let html = `<tr class="groupTitle"><td colspan="${dates.length + 6}">${groupName}</td></tr>`;
+  html += people.map((p, index)=>`
+    <tr class="draggablePersonRow" ${interactive ? `draggable="true"` : ""} data-group="${groupKey}" data-index="${index}">
+      <td>${esc(p.group)}</td>
+      <td class="stickySecond" style="font-weight:800">${esc(PERSON_CN_NAMES[p.name] || "")}</td>
+      <td class="stickyThird ${interactive ? "dragHandle" : ""}" style="font-weight:800" title="${interactive ? "\u62d6\u52a8\u8c03\u6574\u884c\u4f4d\u7f6e" : ""}">${esc(p.name)}</td>
+      ${dates.map(d=>{
+        if(!isDateInCurrentMonth(d)){
+          const prevShift = getPrevMonthDisplayShift(p, d);
+          const prevClass = [prevShift === SHIFT_REST ? "restCell" : prevShift === SHIFT_LEAVE_MANUAL ? "leaveCell" : prevShift ? "" : "prevMonthCell", interactive ? "prevMonthEditable" : "", isKeyDisplayDay(d) ? "keyDayCell" : ""].filter(Boolean).join(" ");
+          if(interactive) return `<td class="${prevClass}" contenteditable="true" tabindex="0" spellcheck="false" data-action="prev-shift" data-group="${groupKey}" data-index="${index}" data-date="${d}">${esc(prevShift)}</td>`;
+          return `<td class="${prevClass}">${renderStaticShiftDisplay(p, d)}</td>`;
+        }
+        const selectedClass = selectedManualCellKey === getManualCellKey(groupKey, index, d) ? "manualCellSelected" : "";
+        const className = [cellClass(p, d), isKeyDisplayDay(d) ? "keyDayCell" : "", interactive ? selectedClass : ""].filter(Boolean).join(" ");
+        if(interactive) return `<td class="${className}" style="${cellStyle(p, p.days[d])}" tabindex="0" data-action="manual-cell" data-group="${groupKey}" data-index="${index}" data-date="${d}">${renderShiftSelect(p, groupKey, index, d)}</td>`;
+        return `<td class="${className}" style="${cellStyle(p, p.days[d])}">${renderStaticShiftDisplay(p, d)}</td>`;
+      }).join("")}
+      <td class="${p.notes.length ? "warn" : "ok"}">${p.notes.length ? esc([...new Set(p.notes)].join("\uff1b")) : "\u65e0"}</td>
+      <td class="stickyCount stickyWork">${workCount(p, dates)}</td>
+      <td class="stickyCount stickyRest">${restCount(p, dates)}</td>
+    </tr>
+  `).join("");
+  return html;
+}
+function buildMonthlyTableMarkup(r, options = {}){
+  if(!r) return "";
+  const { interactive = true } = options;
+  const monthlyDates = getMonthlyDisplayDates(r);
+  const head = renderMonthlyHead(monthlyDates, r.dates, r.holidays);
+  return `<table class="monthlyTable"><thead><tr><th>\u7ec4\u522b</th><th class="stickySecond">\u4e2d\u6587\u540d</th><th class="stickyThird">\u59d3\u540d</th>${head}<th>\u5f02\u5e38\u8bf4\u660e</th><th class="stickyCount stickyWork">\u51fa\u52e4\u5929\u6570</th><th class="stickyCount stickyRest">\u4f11\u606f\u5929\u6570</th></tr></thead><tbody>${renderMonthlyGroup("\u6280\u672f\u5ba2\u670d\u7ec4", "tech", r.tech, monthlyDates, { interactive })}${renderMonthlySummaryRows(r.tech, monthlyDates, r.dates)}${renderMonthlyGroup("\u7535\u5546\u5ba2\u670d\u7ec4", "ecom", r.ecom, monthlyDates, { interactive })}</tbody></table>`;
+}
+function renderPlanPanel(containerId, planKey, planState, options = {}){
+  const container = $(containerId);
+  if(!container) return;
+  const { variant = "" } = options;
+  const isInteractive = currentPlanKey === planKey && latest === planState;
+  const label = getPlanLabel(planKey);
+  const variantClass = variant ? ` ${variant}` : "";
+  if(!planState){
+    container.innerHTML = `<section class="planPanel${variantClass}"><div class="planPanelHeader"><h3>${esc(label)}</h3><span class="planPanelHint">\u6682\u65e0\u6392\u73ed\u6570\u636e</span></div><div class="planEmpty">${esc(label)}\u8fd8\u672a\u751f\u6210\u6216\u4fdd\u5b58</div></section>`;
+    return;
+  }
+  container.innerHTML = `<section class="planPanel${variantClass}"><div class="planPanelHeader"><h3>${esc(label)}</h3><span class="planPanelHint">${isInteractive ? "\u5f53\u524d\u53ef\u76f4\u63a5\u7f16\u8f91" : "\u53ea\u7528\u4e8e\u5c55\u793a"}</span></div>${buildMonthlyTableMarkup(planState, { interactive: isInteractive })}</section>`;
+}
+function resolveRenderedPlanState(planKey, currentRenderState){
+  return currentPlanKey === planKey ? currentRenderState : (getPlanEntry(sharedScheduleBundle, planKey)?.latest || null);
+}
+function renderCoverageTable(r){
+  if(!r){
+    $("coverage").innerHTML = `<div class="planEmpty">\u65b9\u6848A\u6682\u65e0\u68c0\u67e5\u8868\u6570\u636e</div>`;
+    return;
+  }
+  $("coverage").innerHTML = `<table><tr><th>\u65e5\u671f</th><th>\u661f\u671f</th><th>\u7535\u5546\u6b63\u73ed\u4eba\u6570</th><th>\u6280\u672f\u6b63\u73ed\u4eba\u6570</th><th>\u6280\u672f\u4e2d1\u4eba\u6570</th><th>\u6280\u672f\u4e2d2\u4eba\u6570</th><th>\u662f\u5426\u8fbe\u6807</th><th>\u5f02\u5e38\u8bf4\u660e</th></tr>${r.dates.map(d=>{
+    const blank = r.holidays.has(d);
+    const e = r.ecom.filter(p=>isCoverageEligible(p) && p.days[d] === SHIFT_NORMAL).length;
+    const tZ = r.tech.filter(p=>isCoverageEligible(p) && p.days[d] === SHIFT_NORMAL).length;
+    const t1 = r.tech.filter(p=>isCoverageEligible(p) && p.days[d] === SHIFT_MID1).length;
+    const t2 = r.tech.filter(p=>isCoverageEligible(p) && p.days[d] === SHIFT_MID2).length;
+    const vacancyText = getCoverageVacancyText(r.coverageVacancies, d);
+    let ok = true;
+    let note = "";
+    if(blank){ ok = r.all.every(p=>p.days[d] === ""); note = ok ? "\u8282\u5047\u65e5\u7559\u7a7a" : "\u8282\u5047\u65e5\u4e0d\u5e94\u6392\u73ed"; }
+    else if(isWeekend(d)){ ok = e === 1 && tZ >= 1 && t1 >= 1 && t2 >= 1; if(!ok) note = vacancyText || "\u8be5\u65e5\u671f\u73ed\u6b21\u8986\u76d6\u4e0d\u8db3\uff0c\u9700\u8981\u4eba\u5de5\u8c03\u6574"; }
+    else{ ok = tZ >= 1 && t1 >= 1 && t2 >= 1; if(!ok) note = vacancyText || "\u8be5\u65e5\u671f\u73ed\u6b21\u8986\u76d6\u4e0d\u8db3\uff0c\u9700\u8981\u4eba\u5de5\u8c03\u6574"; }
+    return `<tr><td>${d}</td><td>\u5468${weekName(d)}</td><td>${e}</td><td>${tZ}</td><td>${t1}</td><td>${t2}</td><td class="${ok ? "ok" : "bad"}">${ok ? "\u8fbe\u6807" : "\u672a\u8fbe\u6807"}</td><td class="${ok ? "" : "bad"}">${esc(note)}</td></tr>`;
+  }).join("")}</table>`;
+}
+function renderPersonStatsTable(r){
+  if(!r){
+    $("personStats").innerHTML = `<div class="planEmpty">\u65b9\u6848A\u6682\u65e0\u4e2a\u4eba\u7edf\u8ba1\u6570\u636e</div>`;
+    return;
+  }
+  $("personStats").innerHTML = `<table><tr><th>\u7ec4\u522b</th><th>\u4e2d\u6587\u540d</th><th>\u59d3\u540d</th><th>\u4e0a\u6708\u5e95\u8fde\u7eed\u4e0a\u73ed</th><th>\u6b63\u73ed\u5929\u6570</th><th>\u4e2d1\u5929\u6570</th><th>\u4e2d2\u5929\u6570</th><th>\u4f11\u606f\u5929\u6570</th><th>\u5468\u672b\u503c\u73ed\u5929\u6570</th><th>\u6700\u957f\u8fde\u7eed\u4e0a\u73ed</th><th>\u6700\u957f\u8fde\u7eed\u4f11\u606f</th><th>\u5f02\u5e38\u8bf4\u660e</th></tr>${r.all.map(p=>`<tr><td>${esc(p.group)}</td><td style="font-weight:800">${esc(PERSON_CN_NAMES[p.name] || "")}</td><td style="font-weight:800">${esc(p.name)}</td><td>${p.carryWork}</td><td>${countShift(p, r.dates, SHIFT_NORMAL)}</td><td>${countShift(p, r.dates, SHIFT_MID1)}</td><td>${countShift(p, r.dates, SHIFT_MID2)}</td><td>${restCount(p, r.dates)}</td><td>${weekendWorkCount(p, r.dates)}</td><td class="${maxWorkStreak(p, r.dates) > 6 ? "bad" : ""}">${maxWorkStreak(p, r.dates)}</td><td class="${maxRestStreak(p, r.dates) > 3 ? "bad" : ""}">${maxRestStreak(p, r.dates)}</td><td class="${p.notes.length ? "warn" : "ok"}">${p.notes.length ? esc([...new Set(p.notes)].join("\uff1b")) : "\u65e0"}</td></tr>`).join("")}</table>`;
+}
+function formatHolidaySummary(dates, holidays){
+  const holidayDates = dates.filter(d=>holidays.has(d));
+  if(!holidayDates.length) return "\u6cd5\u5b9a\u8282\u5047\u65e5\uff1a0\u5929";
+  const labels = holidayDates.map(date=>{
+    const match = String(date).match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if(!match) return date;
+    return `${Number(match[2])}\u6708${Number(match[3])}\u65e5`;
+  });
+  return `\u6cd5\u5b9a\u8282\u5047\u65e5\uff1a${labels.join("\u3001")}`;
+}
+function render(r){
+  setImageExportState(null);
+  const planAState = resolveRenderedPlanState("planA", r);
+  const planBState = resolveRenderedPlanState("planB", r);
+  const planCState = resolveRenderedPlanState("planC", r);
+  renderPlanPanel("monthly", "planA", planAState);
+  renderPlanPanel("monthlyPlanB", "planB", planBState, { variant: "planBPanel" });
+  renderPlanPanel("monthlyPlanC", "planC", planCState, { variant: "planCPanel" });
+  renderCoverageTable(planAState);
+  renderPersonStatsTable(planAState);
+  const generationText = r.regenerateMode === "changed" ? TEXT.generationChanged : r.regenerateMode === "unchanged" ? TEXT.generationUnchanged : TEXT.generationInitial;
+  $("summaryPills").innerHTML = `<span class="pill">${esc(generationText)}</span><span class="pill">\u6708\u4efd\uff1a${esc(r.month)}</span><span class="pill">\u4eba\u6570\uff1a${r.all.length}</span><span class="pill">${esc(formatHolidaySummary(r.dates, r.holidays))}</span>${getSharedStatusPillHtml()}`;
+}
+function buildExportTableHtml(containerId){
+  const container = $(containerId);
+  const table = container?.querySelector("table");
+  if(!table) return "";
+  const clone = table.cloneNode(true);
+  clone.querySelectorAll("select").forEach(select=>{
+    const text = select.options[select.selectedIndex]?.text || "";
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.fontWeight = "700";
+    span.style.color = "inherit";
+    select.replaceWith(span);
+  });
+  clone.querySelectorAll("[contenteditable='true']").forEach(cell=>{
+    cell.removeAttribute("contenteditable");
+    cell.removeAttribute("tabindex");
+    cell.removeAttribute("spellcheck");
+  });
+  clone.querySelectorAll("[draggable='true']").forEach(row=>row.removeAttribute("draggable"));
+  return clone.outerHTML;
+}
+function buildMonthlyExportTableHtml(){
+  const container = $("monthly");
+  const table = container?.querySelector("table");
+  if(!table) return "";
+  const clone = table.cloneNode(true);
+  clone.querySelectorAll("select").forEach(select=>{
+    const text = select.options[select.selectedIndex]?.text || "";
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.fontWeight = "700";
+    span.style.color = "inherit";
+    select.replaceWith(span);
+  });
+  clone.querySelectorAll("[contenteditable='true']").forEach(cell=>{
+    cell.removeAttribute("contenteditable");
+    cell.removeAttribute("tabindex");
+    cell.removeAttribute("spellcheck");
+  });
+  clone.querySelectorAll("[draggable='true']").forEach(row=>row.removeAttribute("draggable"));
+  clone.querySelectorAll(".stickySecond,.stickyThird,.stickyCount,.stickyWork,.stickyRest,.summaryStickyLabel,.dragHandle,.prevMonthEditable").forEach(cell=>{
+    cell.classList.remove("stickySecond","stickyThird","stickyCount","stickyWork","stickyRest","summaryStickyLabel","dragHandle","prevMonthEditable");
+  });
+  clone.querySelectorAll("[style]").forEach(node=>{
+    const style = node.getAttribute("style") || "";
+    if(/font-weight/i.test(style) && !/background/i.test(style)){
+      node.setAttribute("style", "font-weight:800");
+    }else if(!style.trim()){
+      node.removeAttribute("style");
+    }
+  });
+  const rows = [...clone.rows];
+  if(rows.length){
+    const headerCells = [...rows[0].cells];
+    const noteIndex = headerCells.findIndex(cell=>cell.textContent.trim() === "异常说明");
+    if(noteIndex >= 0){
+      rows.forEach(row=>{
+        if(row.classList.contains("groupTitle")){
+          const titleCell = row.cells[0];
+          if(titleCell){
+            titleCell.colSpan = Math.max(1, titleCell.colSpan - 1);
+          }
+          return;
+        }
+        if(row.cells[noteIndex]) row.deleteCell(noteIndex);
+      });
+    }
+  }
+  return clone.outerHTML;
+}
+function buildGlobalModeTableHtml(){
+  const container = $("monthly");
+  const table = container?.querySelector("table");
+  if(!table) return "";
+  const clone = table.cloneNode(true);
+  clone.classList.add("globalModeTable");
+  clone.querySelectorAll("select").forEach(select=>{
+    const text = select.options[select.selectedIndex]?.text || "";
+    const span = document.createElement("span");
+    span.textContent = text;
+    span.style.fontWeight = "700";
+    span.style.color = "inherit";
+    select.replaceWith(span);
+  });
+  clone.querySelectorAll("button.tagBadge").forEach(button=>{
+    const span = document.createElement("span");
+    span.textContent = button.textContent || "";
+    span.className = "tagBadge";
+    button.replaceWith(span);
+  });
+  clone.querySelectorAll(".tagSelect").forEach(select=>{
+    const text = select.options[select.selectedIndex]?.text || "";
+    const span = document.createElement("span");
+    span.textContent = text.trim();
+    span.className = "globalModeTagText";
+    select.replaceWith(span);
+  });
+  clone.querySelectorAll("[contenteditable='true']").forEach(cell=>{
+    cell.removeAttribute("contenteditable");
+    cell.removeAttribute("tabindex");
+    cell.removeAttribute("spellcheck");
+  });
+  clone.querySelectorAll("[draggable='true']").forEach(row=>row.removeAttribute("draggable"));
+  clone.querySelectorAll(".stickySecond,.stickyThird,.stickyCount,.stickyWork,.stickyRest,.summaryStickyLabel,.dragHandle,.prevMonthEditable,.manualCellSelected").forEach(cell=>{
+    cell.classList.remove("stickySecond","stickyThird","stickyCount","stickyWork","stickyRest","summaryStickyLabel","dragHandle","prevMonthEditable","manualCellSelected");
+  });
+  clone.querySelectorAll("[style]").forEach(node=>{
+    const style = node.getAttribute("style") || "";
+    if(/font-weight/i.test(style) && !/background/i.test(style)){
+      node.setAttribute("style", "font-weight:800");
+    }else if(!style.trim()){
+      node.removeAttribute("style");
+    }
+  });
+  const rows = [...clone.rows];
+  if(rows.length){
+    const headerCells = [...rows[0].cells];
+    const noteIndex = headerCells.findIndex(cell=>cell.textContent.trim() === "异常说明");
+    if(noteIndex >= 0){
+      rows.forEach(row=>{
+        if(row.classList.contains("groupTitle")){
+          const titleCell = row.cells[0];
+          if(titleCell){
+            titleCell.colSpan = Math.max(1, titleCell.colSpan - 1);
+          }
+          return;
+        }
+        if(row.cells[noteIndex]) row.deleteCell(noteIndex);
+      });
+    }
+  }
+  return clone.outerHTML;
+}
+function getExportStyles(){
+  return `body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;color:#1f2937;padding:16px;background:#fff}
+h2{margin:0 0 10px;font-size:18px}
+h3{margin:18px 0 8px;font-size:15px}
+table{border-collapse:collapse;margin-bottom:16px;background:#fff}
+th,td{border:1px solid #cfe6d7;padding:6px 8px;font-size:13px;text-align:center;white-space:nowrap}
+th{background:#edf8f0}
+.groupTitle td{background:#ddf3e3 !important;font-weight:800;text-align:left;border-top:3px solid #1f6d44}
+.warn{color:#b54708;font-weight:700}
+.bad{color:#b42318;font-weight:800}
+.ok{color:#087443;font-weight:800}
+.restCell{background:#fff !important;color:#98a2b3}
+.blankCell{background:#f3faf5 !important;color:#b9cebf}
+.prevMonthCell{background:#f3faf5 !important;color:#667085}
+.prevMonthHead{background:#f3faf5 !important;color:#667085}
+.leaveCell{color:#b42318 !important}
+.summaryRow td{background:#f3faf5 !important;font-weight:800}
+.keyDayCell{font-weight:800}`;
+}
+function getGlobalModeStyles(){
+  return `body{font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif;color:#143126;margin:0;background:#f3fbf5}
+.globalModePage{padding:14px}
+.globalModeHeader{display:flex;align-items:flex-end;justify-content:space-between;gap:12px;margin-bottom:10px}
+.globalModeTitle{font-size:20px;font-weight:800}
+.globalModeHint{font-size:12px;color:#5e7d6f}
+.globalModeBack{height:38px;border:1px solid #22a05a;background:#fff;color:#22a05a;border-radius:10px;padding:0 14px;font-weight:700;cursor:pointer;font-family:"Microsoft YaHei","PingFang SC",Arial,sans-serif}
+.globalModeWrap{overflow:auto;border:1px solid #cfe6d7;border-radius:12px;background:#fff;padding:8px;box-shadow:0 14px 40px rgba(27,94,48,.08)}
+table{border-collapse:collapse;width:max-content;min-width:100%;background:#fff}
+th,td{border:1px solid #cfe6d7;padding:3px 5px;font-size:11px;line-height:1.2;text-align:center;white-space:nowrap}
+th{background:#edf8f0;font-size:10px}
+.groupTitle td{background:#ddf3e3 !important;font-weight:800;text-align:left;border-top:2px solid #1f6d44}
+.summaryRow td{background:#f3faf5 !important;font-weight:800}
+.restCell{background:#fff !important;color:#98a2b3}
+.blankCell{background:#f3faf5 !important;color:#b9cebf}
+.prevMonthCell{background:#f3faf5 !important;color:#667085}
+.prevMonthHead{background:#f3faf5 !important;color:#667085}
+.leaveCell{color:#b42318 !important}
+.bad{color:#b42318;font-weight:800}
+.ok{color:#087443;font-weight:800}
+.warn{color:#b54708;font-weight:700}
+.keyDayCell{font-weight:800}
+.tagBadge,.globalModeTagText{display:block;font-size:11px;line-height:1.1;color:#111;font-weight:800;font-family:"SimHei","Microsoft YaHei","PingFang SC",sans-serif;margin-top:2px}
+@media print{
+  body{background:#fff}
+  .globalModePage{padding:0}
+  .globalModeWrap{border:0;box-shadow:none;padding:0;overflow:visible}
+}`;
+}
+function buildExportContentHtml(r){
+  return `<h2>${esc(r.month)}客服排班</h2>
+<h3>月度排班表</h3>
+${buildExportTableHtml("monthly")}
+<h3>每日覆盖统计</h3>
+${buildExportTableHtml("coverage")}
+<h3>人员统计</h3>
+${buildExportTableHtml("personStats")}`;
+}
+function buildMonthlyExportContentHtml(r){
+  return `<h2>${esc(r.month)}客服排班</h2>
+<h3>月度排班表</h3>
+${buildMonthlyExportTableHtml()}`;
+}
+function buildGlobalModeContentHtml(r){
+  return `<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>${esc(r.month)}全局排班总览</title>
+<style>${getGlobalModeStyles()}</style>
+</head>
+<body>
+  <main class="globalModePage">
+    <section class="globalModeHeader">
+      <div>
+        <div class="globalModeTitle">${esc(r.month)}客服排班全局模式</div>
+        <div class="globalModeHint">已隐藏异常原因，保留出勤天数和休息天数，适合整月总览或单独展开查看。</div>
+      </div>
+      <button type="button" class="globalModeBack" onclick="window.history.back()">返回</button>
+    </section>
+    <section class="globalModeWrap">
+      ${buildGlobalModeTableHtml()}
+    </section>
+  </main>
+</body>
+</html>`;
+}
+let globalModeViewUrl = "";
+function openGlobalModeView(){
+  if(!latest) return alert(TEXT.pleaseGenerate);
+  const html = buildGlobalModeContentHtml(latest);
+  if(globalModeViewUrl){
+    URL.revokeObjectURL(globalModeViewUrl);
+    globalModeViewUrl = "";
+  }
+  globalModeViewUrl = URL.createObjectURL(new Blob([html], { type:"text/html;charset=utf-8" }));
+  const newWindow = window.open(globalModeViewUrl, "_blank", "noopener,noreferrer");
+  if(!newWindow){
+    window.location.href = globalModeViewUrl;
+    return;
+  }
+  newWindow.focus();
+}
+let previewImageBlob = null;
+function triggerDownload(url, fileName){
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+}
+function setImageExportState(blob = null){
+  const saveBtn = $("saveImageBtn");
+  previewImageBlob = blob;
+  saveBtn.disabled = !blob;
+}
+async function ensureImageExportLibrary(){
+  if(window.htmlToImage?.toBlob) return window.htmlToImage;
+  await new Promise((resolve, reject)=>{
+    const existing = document.querySelector("script[data-role='html-to-image']");
+    if(existing){
+      existing.addEventListener("load", resolve, {once:true});
+      existing.addEventListener("error", reject, {once:true});
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = "https://cdn.jsdelivr.net/npm/html-to-image@1.11.11/dist/html-to-image.min.js";
+    script.async = true;
+    script.dataset.role = "html-to-image";
+    script.onload = resolve;
+    script.onerror = reject;
+    document.head.appendChild(script);
+  });
+  if(!window.htmlToImage?.toBlob) throw new Error("图片导出库加载失败");
+  return window.htmlToImage;
+}
+function buildMonthlyExportNode(r){
+  const wrapper = document.createElement("div");
+  wrapper.style.position = "fixed";
+  wrapper.style.left = "12px";
+  wrapper.style.top = "12px";
+  wrapper.style.pointerEvents = "none";
+  wrapper.style.transform = "translateZ(0)";
+  wrapper.style.width = "max-content";
+  wrapper.style.maxWidth = "none";
+  wrapper.style.overflow = "visible";
+  wrapper.style.background = "#fff";
+  wrapper.style.padding = "16px";
+  wrapper.style.zIndex = "-1";
+  wrapper.innerHTML = `<style>${getExportStyles()}</style>${buildMonthlyExportContentHtml(r)}`;
+  document.body.appendChild(wrapper);
+  return wrapper;
+}
+async function savePreviewImage(){
+  if(!previewImageBlob || !latest) return alert("请先生成月度排班图片");
+  const fileName = `${latest.month}\u5ba2\u670d\u6392\u73ed-\u6708\u5ea6\u6392\u73ed\u8868.png`;
+  if(typeof window.showSaveFilePicker === "function"){
+    try{
+      const handle = await window.showSaveFilePicker({
+        suggestedName: fileName,
+        types: [{ description: "PNG 图片", accept: { "image/png": [".png"] } }]
+      });
+      const writable = await handle.createWritable();
+      await writable.write(previewImageBlob);
+      await writable.close();
+      alert("PNG 已保存");
+      return;
+    }catch(error){
+      if(error?.name === "AbortError") return;
+    }
+  }
+  const pngUrl = URL.createObjectURL(previewImageBlob);
+  triggerDownload(pngUrl, fileName);
+  setTimeout(()=>URL.revokeObjectURL(pngUrl), 1000);
+  alert("PNG 已开始保存。如果浏览器拦截了下载，请允许当前页面下载文件。");
+}
+function downloadStyledExcel(){
+  if(!latest) return alert(TEXT.pleaseGenerate);
+  const r = latest;
+  const exportHtml = `<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="application/vnd.ms-excel; charset=UTF-8">
+<style>${getExportStyles()}</style>
+</head>
+<body>
+${buildExportContentHtml(r)}
+</body>
+</html>`;
+  const blob = new Blob(["\ufeff" + exportHtml], {type:"application/vnd.ms-excel;charset=utf-8"});
+  const fileUrl = URL.createObjectURL(blob);
+  triggerDownload(fileUrl, `${r.month}\u5ba2\u670d\u6392\u73ed.xls`);
+  setTimeout(()=>URL.revokeObjectURL(fileUrl), 1000);
+}
+async function downloadScheduleImage(){
+  if(!latest) return alert(TEXT.pleaseGenerate);
+  setImageExportState(null);
+  try{
+    const htmlToImage = await ensureImageExportLibrary();
+    const exportNode = buildMonthlyExportNode(latest);
+    const pngBlob = await htmlToImage.toBlob(exportNode, {
+      pixelRatio: 2,
+      backgroundColor: "#ffffff",
+      cacheBust: true
+    });
+    if(exportNode.parentNode) exportNode.parentNode.removeChild(exportNode);
+    if(!pngBlob) return alert("图片生成失败，请重试");
+    setImageExportState(pngBlob);
+    alert("月度排班图片已生成，可以点击“保存 PNG”");
+  }catch(error){
+    const exportNode = document.querySelector("body > div[style*='z-index: -1'], body > div[style*='z-index:-1']");
+    if(exportNode?.parentNode) exportNode.parentNode.removeChild(exportNode);
+    console.error(error);
+    alert("图片生成失败，请检查网络后重试");
+  }
+}
+function writePrevMonthTailData(){
+  const text = $("prevSchedule").value.trim();
+  if(!text) return alert("\u8bf7\u5148\u7c98\u8d34\u4e0a\u6708\u6392\u73ed\u8868");
+  if(!latest){
+    handleGenerateClick();
+    return;
+  }
+  latest.all.forEach(person=>{
+    person.prevMonthDayMap = {};
+    person.carryWork = 0;
+    person.carryRest = 0;
+  });
+  parsePrevSchedule(latest.all);
+  render(latest);
+  alert("\u5df2\u5199\u5165\u4e0a\u6708\u6708\u672b\u5012\u65707\u5929\u6392\u73ed\u6570\u636e");
+}
+async function loadSample(){
+  const now = new Date();
+  const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+  $("month").value = `${nextMonth.getFullYear()}-${pad(nextMonth.getMonth() + 1)}`;
+  sharedScheduleBundle = createEmptySharedScheduleBundle();
+  currentPlanKey = PLAN_OPTIONS[0].key;
+  comparePlanKey = "";
+  createDefaultGroupEditors();
+  syncAllGroupTextareas();
+  renderGroupEditors();
+  await applyOfficialMonthDefaults();
+  closeHolidayCalendar();
+  syncMultiInput("lastEcomWeekend", new Set());
+  syncMultiInput("lastTechWeekend", new Set());
+  refreshFixedRuleOptions();
+  syncPlanControls();
+  $("summaryPills").innerHTML = getSharedStatusPillHtml();
+  updateGenerateButton(false);
+}
+
+$("month").addEventListener("change", ()=>{
+  for(const groupKey of Object.keys(groupEditors)){
+    groupEditors[groupKey].forEach(person=>{
+      person.blockedRules = person.blockedRules.filter(rule=>isDateInCurrentMonth(rule.date));
+      person.blockedDraft = person.blockedDraft.filter(rule=>isDateInCurrentMonth(rule.date));
+    });
+  }
+  syncAllGroupTextareas();
+  void applyOfficialMonthDefaults();
+  refreshFixedRuleOptions();
+  if(!$("holidayCalendar").hidden) renderHolidayCalendar();
+});
+$("holidayToggle").addEventListener("click", ()=>{ if($("holidayCalendar").hidden) openHolidayCalendar(); else closeHolidayCalendar(); });
+$("lastEcomWeekendToggle").addEventListener("click", ()=>{
+  const names = parseNames($("ecom").value);
+  if($("lastEcomWeekendPanel").hidden) openMultiPicker("lastEcomWeekend", names, TEXT.emptyLastEcom, TEXT.titleLastEcom);
+  else closeMultiPicker("lastEcomWeekend", TEXT.titleLastEcom);
+});
+$("lastTechWeekendToggle").addEventListener("click", ()=>{
+  const names = parseNames($("tech").value);
+  if($("lastTechWeekendPanel").hidden) openMultiPicker("lastTechWeekend", names, TEXT.emptyLastTech, TEXT.titleLastTech);
+  else closeMultiPicker("lastTechWeekend", TEXT.titleLastTech);
+});
+$("saveCurrentBtn").addEventListener("click", async ()=>{
+  await saveSharedScheduleState();
+});
+$("refreshCurrentBtn").addEventListener("click", async ()=>{
+  await loadSharedScheduleState();
+});
+$("clearCurrentBtn").addEventListener("click", async ()=>{
+  await clearSharedScheduleState();
+});
+$("planSelect").addEventListener("change", event=>{
+  switchCurrentPlan(event.target.value);
+});
+$("copyPlanBtn").addEventListener("click", ()=>{
+  const availablePlans = PLAN_OPTIONS.filter(option=>option.key !== currentPlanKey);
+  const suggestion = availablePlans[0]?.label.replace("方案", "") || "B";
+  const answer = window.prompt(`复制到哪个方案？请输入 ${availablePlans.map(option=>option.label.replace("方案", "")).join(" / ")}`, suggestion);
+  const targetPlanKey = resolvePlanKeyFromInput(answer);
+  if(!targetPlanKey || targetPlanKey === currentPlanKey) return;
+  if(!copyCurrentPlanTo(targetPlanKey)) return;
+  if(latest) render(latest);
+  else clearGeneratedScheduleView();
+  updateSharedStatusPill();
+  alert(`已复制到${getPlanLabel(targetPlanKey)}`);
+});
+$("globalModeBtn").addEventListener("click", ()=>{
+  openGlobalModeView();
+});
+$("saveImageBtn").addEventListener("click", async ()=>{
+  await savePreviewImage();
+});
+bindGroupEditorEvents("all", "peopleEditor");
+$("monthlyPlans").addEventListener("change", handleManualScheduleChange);
+$("monthlyPlans").addEventListener("click", event=>{
+  const target = event.target;
+  const manualCell = resolveManualCellElement(target);
+  if(manualCell instanceof HTMLElement){
+    setSelectedManualCell(manualCell.dataset.group || "", Number(manualCell.dataset.index || 0), manualCell.dataset.date || "", { extend: event.shiftKey });
+    if(!(target instanceof HTMLSelectElement) && !(target instanceof HTMLButtonElement)) manualCell.focus();
+  }
+  if(!(target instanceof HTMLElement) || target.dataset.action !== "edit-tag") return;
+  editingTagKey = getTagEditKey(target.dataset.group || "", Number(target.dataset.index || 0), target.dataset.date || "");
+  render(latest);
+  focusEditingTagSelect();
+});
+$("monthlyPlans").addEventListener("focusin", event=>{
+  const manualCell = resolveManualCellElement(event.target);
+  if(!(manualCell instanceof HTMLElement)) return;
+  if(!manualSelectionDragActive) setSelectedManualCell(manualCell.dataset.group || "", Number(manualCell.dataset.index || 0), manualCell.dataset.date || "");
+});
+$("monthlyPlans").addEventListener("mousedown", event=>{
+  if(event.button !== 0) return;
+  const manualCell = resolveManualCellElement(event.target);
+  if(!(manualCell instanceof HTMLElement)) return;
+  manualSelectionDragActive = true;
+  setSelectedManualCell(manualCell.dataset.group || "", Number(manualCell.dataset.index || 0), manualCell.dataset.date || "");
+});
+$("monthlyPlans").addEventListener("mouseover", event=>{
+  if(!manualSelectionDragActive) return;
+  const manualCell = resolveManualCellElement(event.target);
+  if(!(manualCell instanceof HTMLElement)) return;
+  setSelectedManualCell(manualCell.dataset.group || "", Number(manualCell.dataset.index || 0), manualCell.dataset.date || "", { extend: true });
+});
+document.addEventListener("mouseup", ()=>{
+  manualSelectionDragActive = false;
+});
+$("monthlyPlans").addEventListener("focusout", event=>{
+  const target = event.target;
+  if(!(target instanceof HTMLSelectElement) || target.dataset.action !== "manual-tag") return;
+  const currentKey = getTagEditKey(target.dataset.group || "", Number(target.dataset.index || 0), target.dataset.date || "");
+  if(editingTagKey !== currentKey) return;
+  const related = event.relatedTarget;
+  if(related instanceof HTMLElement && related.closest(".scheduleCellWrap") === target.closest(".scheduleCellWrap")) return;
+  editingTagKey = "";
+  render(latest);
+});
+$("monthlyPlans").addEventListener("blur", handlePrevMonthCellBlur, true);
+$("monthlyPlans").addEventListener("copy", event=>{
+  handleManualCellCopy(event);
+});
+$("monthlyPlans").addEventListener("paste", handlePrevMonthCellPaste);
+$("monthlyPlans").addEventListener("dragstart", handleMonthlyDragStart);
+$("monthlyPlans").addEventListener("dragover", handleMonthlyDragOver);
+$("monthlyPlans").addEventListener("dragleave", handleMonthlyDragLeave);
+$("monthlyPlans").addEventListener("drop", handleMonthlyDrop);
+$("targetWork").addEventListener("input", renderGroupEditors);
+$("targetRest").addEventListener("input", renderGroupEditors);
+void loadSample();
+void loadSharedScheduleState({ silent:true });
+</script>
+</body>
+</html>
